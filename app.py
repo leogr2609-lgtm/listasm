@@ -323,7 +323,6 @@ def main():
     st.markdown("<div style='text-align: center; margin-bottom: 30px;'>", unsafe_allow_html=True)
     st.markdown("<h1 style='font-size: 50px; margin-bottom: 0;'>nutribere</h1>", unsafe_allow_html=True)
     st.markdown("<div style='text-align: center; margin-bottom: 30px;'>", unsafe_allow_html=True)
-    st.markdown("<h1 style='font-size: 50px; margin-bottom: 0;'>nutri bere</h1>", unsafe_allow_html=True)
     st.markdown("<div style='width: 40px; height: 3px; background-color: #FBC02D; margin: 10px auto;'></div>", unsafe_allow_html=True)
     st.markdown("<p style='font-size: 14px; opacity: 0.8; letter-spacing: 2px;'>IMPRESORA DE LOGÍSTICA</p>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
@@ -405,4 +404,5 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
