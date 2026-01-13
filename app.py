@@ -10,7 +10,7 @@ import PyPDF2
 import io
 
 # --- 1. CONFIGURACIÓN DE API Y MARCA ---
-API_KEY = "AIzaSyDWC18CVtUGnqz1vT-1ehC35cUDJLVCjyE" 
+API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 # Configuración VITAL: v1beta para Gemini 3 Flash Preview
 client = genai.Client(
@@ -289,7 +289,39 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
     return bytes(pdf.output())
 
 # --- 6. INTERFAZ PRINCIPAL ---
+def check_password():
+    """Retorna True si el usuario ingresó la contraseña correcta."""
+    
+    # Validamos si la contraseña ya es correcta en la sesión
+    if st.session_state.get("password_correct", False):
+        return True
+
+    # Si no, mostramos el input para escribirla
+    st.text_input(
+        "🔐 Contraseña de Acceso", 
+        type="password", 
+        key="password_input"
+    )
+
+    # Verificamos cuando el usuario escribe algo
+    if "password_input" in st.session_state:
+        password = st.session_state["password_input"]
+        if password == st.secrets["PASSWORD_ACCESO"]:
+            st.session_state["password_correct"] = True
+            st.rerun()  # Recarga la página para mostrar la app
+        elif password:
+            st.error("❌ Contraseña incorrecta")
+
+    return False
+
 def main():
+    # --- BLOQUEO DE SEGURIDAD ---
+    if not check_password():
+        st.stop()  # <--- AQUÍ SE DETIENE SI NO HAY PASSWORD
+    
+    # --- AQUÍ EMPIEZA TU APP NORMAL ---
+    st.markdown("<div style='text-align: center; margin-bottom: 30px;'>", unsafe_allow_html=True)
+    st.markdown("<h1 style='font-size: 50px; margin-bottom: 0;'>nutri bere</h1>", unsafe_allow_html=True)
     st.markdown("<div style='text-align: center; margin-bottom: 30px;'>", unsafe_allow_html=True)
     st.markdown("<h1 style='font-size: 50px; margin-bottom: 0;'>nutri bere</h1>", unsafe_allow_html=True)
     st.markdown("<div style='width: 40px; height: 3px; background-color: #FBC02D; margin: 10px auto;'></div>", unsafe_allow_html=True)
@@ -371,4 +403,5 @@ def main():
         st.warning("⚠️ Por favor escribe el nombre del paciente antes de continuar.")
 
 if __name__ == "__main__":
+
     main()
