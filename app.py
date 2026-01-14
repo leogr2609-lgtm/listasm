@@ -231,26 +231,26 @@ def procesar_con_ia(pdf_file):
         st.error(f"Error de IA: {e}")
         return {}
 
-# B. Generador de PDF (CON CORRECCIÓN DE SALTO DE PÁGINA)
+# B. Generador de PDF (VERSIÓN FINAL CON TEXTO APROBADO)
 def generar_pdf_desde_editor(datos_editados, nombre_paciente):
     pdf = NutriListPDF(nombre_paciente)
     pdf.alias_nb_pages()
     pdf.add_page()
-    # Margen inferior automático de 28mm para evitar cortar el footer
+    # Margen inferior para evitar cortes
     pdf.set_auto_page_break(auto=True, margin=28)
     
+    # --- BUCLE DE INGREDIENTES ---
     for categoria, items_df in datos_editados.items():
         lista_items = items_df["Producto"].dropna().tolist()
         lista_items = [x for x in lista_items if x.strip()]
 
         if not lista_items: continue
         
-        # Verificación de espacio para el TÍTULO de categoría
-        # Si estamos muy abajo (>225), salta de página antes del título
+        # TÍTULOS DE CATEGORÍA
         if pdf.get_y() > 225: pdf.add_page()
         else: pdf.ln(5)
 
-        # Imprimir Título
+        # Estilo Teal para encabezados
         pdf.set_fill_color(*COLOR_TEAL)
         pdf.set_text_color(*COLOR_WHITE)
         pdf.set_font('Helvetica', 'B', 12)
@@ -260,31 +260,57 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
         pdf.set_font('Helvetica', '', 11)
         pdf.set_text_color(*COLOR_TEXT_DARK)
         
-        # Imprimir Ítems
+        # LISTA DE ÍTEMS
         for item in lista_items:
-            # --- GUARDIA DE SEGURIDAD PARA EL SALTO DE PÁGINA ---
-            # Si estamos cerca del margen inferior (260mm), forzamos salto MANUAL
-            # antes de dibujar el recuadro. Esto mantiene recuadro y texto juntos.
             if pdf.get_y() > 260:
                 pdf.add_page()
-                # Opcional: repetir fuente si se reinicia (aunque fpdf lo mantiene)
                 pdf.set_font('Helvetica', '', 11)
                 pdf.set_text_color(*COLOR_TEXT_DARK)
 
-            # 1. Dibujar Recuadro
+            # Checkbox visual (cuadrito amarillo)
             pdf.set_x(15)
             pdf.set_draw_color(*COLOR_YELLOW)
             pdf.set_line_width(0.5)
-            # Dibujamos en posición actual + ajuste visual
             pdf.rect(15, pdf.get_y() + 1.2, 4.5, 4.5) 
             
-            # 2. Escribir Texto
+            # Texto del ingrediente
             pdf.set_x(24) 
-            # Multi_cell maneja el texto. Si es muy largo, baja solo.
             pdf.multi_cell(0, 7, str(item))
-            
-            # 3. Pequeño espacio extra
             pdf.ln(1)
+
+    # --- AQUÍ EMPIEZA LA SECCIÓN NUEVA (NOTA FINAL) ---
+    pdf.ln(10) # Espacio antes de la nota
+    
+    # Calculamos si cabe en la hoja, si no, salta de página
+    if pdf.get_y() > 220: 
+        pdf.add_page()
+    
+    # 1. Línea separadora gris
+    pdf.set_draw_color(200, 200, 200)
+    pdf.line(20, pdf.get_y(), 190, pdf.get_y())
+    pdf.ln(6)
+    
+    # 2. Título en color Teal (Marca)
+    pdf.set_text_color(*COLOR_TEAL)
+    pdf.set_font('Helvetica', 'B', 10)
+    pdf.cell(0, 6, "CÓMO USAR TU LISTA DE SÚPER", ln=True)
+    
+    # 3. Texto del cuerpo (Gris oscuro para lectura fácil)
+    pdf.set_text_color(80, 80, 80)
+    pdf.set_font('Helvetica', '', 9)
+    
+    # El texto exacto que me diste
+    mensaje_final = (
+        "Esta lista trae los ingredientes exactos para cocinar cada uno de tus menús una sola vez.\n\n"
+        "¿Vas a repetir menús? Si decides repetir un menú completo en la semana (ej. volver a comer el Menú 1 el jueves), "
+        "simplemente agrega a tu carrito la cantidad extra necesaria para ese día.\n\n"
+        "Ejemplo: Si el Menú 1 pide 100g de pollo y lo vas a preparar dos veces en la semana, ¡recuerda comprar 100g más!\n\n"
+        "Importante: Las cantidades mostradas son estimaciones logísticas aproximadas para facilitar tu compra. "
+        "Ajusta según tus preferencias."
+    )
+    
+    # Imprimimos el bloque de texto
+    pdf.multi_cell(0, 5, mensaje_final)
             
     return bytes(pdf.output())
 
@@ -404,5 +430,6 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
