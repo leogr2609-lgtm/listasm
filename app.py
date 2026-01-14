@@ -193,7 +193,7 @@ class NutriListPDF(FPDF):
         # Subtítulo
         self.set_font('Helvetica', '', 11)
         self.set_y(35)
-        self.cell(0, 10, 'LOGÍSTICA DE COMPRAS - 8 DÍAS', ln=True, align='C')
+        self.cell(0, 10, 'LISTA DE SUPERMERCADO INTELIGENTE', ln=True, align='C')
         
         # AJUSTE ANTICHOQUE: Obligamos a empezar abajo del header
         self.set_y(60)
@@ -431,6 +431,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
