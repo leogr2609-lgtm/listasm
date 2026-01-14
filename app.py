@@ -312,7 +312,8 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
     # Imprimimos el bloque de texto
     pdf.multi_cell(0, 5, mensaje_final)
             
-    return bytes(pdf.output())
+   # Corrección: Forzamos la salida como String ('S') y la codificamos a Latin-1 (estándar de FPDF)
+    return pdf.output(dest='S').encode('latin-1')
 
 # --- 6. INTERFAZ PRINCIPAL ---
 def check_password():
@@ -430,6 +431,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
