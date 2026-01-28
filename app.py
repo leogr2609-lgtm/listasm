@@ -323,138 +323,84 @@ def check_password():
     if st.session_state.get("password_correct", False):
         return True
 
-    # --- ESTILO TIPO "HEVY" (SaaS CLEAN) ---
+    # --- CSS MÍNIMO (Aprovechando tu config.toml) ---
     st.markdown("""
     <style>
-    /* 1. FORZAR MODO CLARO (WHITE MODE) */
-    /* Esto obliga a que el fondo sea blanco aunque tu navegador esté en oscuro */
-    [data-testid="stAppViewContainer"] {
-        background-color: #FFFFFF !important;
-    }
-    [data-testid="stHeader"] {
-        background-color: rgba(0,0,0,0) !important;
-    }
-    
-    /* 2. TEXTOS EN NEGRO */
-    h1, h2, h3, p, label, span, div {
-        color: #1A1A1A !important;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    /* 3. INPUTS (Estilo Hevy: Borde gris suave, fondo blanco, esquinas redondeadas) */
-    div[data-baseweb="input"] {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E0E0E0 !important;
-        border-radius: 8px !important;
-        padding: 4px !important;
-    }
-    /* Arreglo del input de password y texto */
-    input {
-        color: #000000 !important;
-        background-color: #FFFFFF !important;
-    }
-    
-    /* 4. BOTÓN (Estilo Hevy: Ancho completo, Gris o Color Marca) */
-    div[data-testid="stButton"] button {
-        width: 100%;
-        background-color: #0C5A5D !important; /* Tu color Teal */
-        color: #FFFFFF !important; /* Texto Blanco */
-        border: none;
-        padding: 12px;
-        font-weight: 600;
-        border-radius: 8px;
-        transition: background-color 0.3s;
-        margin-top: 10px;
-    }
-    div[data-testid="stButton"] button:hover {
-        background-color: #094648 !important; /* Un poco más oscuro al hover */
-        box-shadow: 0 4px 12px rgba(12, 90, 93, 0.2);
-    }
-
-    /* Ocultar elementos innecesarios */
+    /* Ocultamos header y footer para limpieza visual */
     header {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* Ajuste para la columna de la derecha (Imagen/Brand) */
-    .brand-column {
-        background-color: #F4F6F8;
-        border-radius: 20px;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    /* Quitamos el padding excesivo de arriba para que llegue al borde */
+    .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 0rem !important;
+        padding-left: 5rem !important;
+        padding-right: 0rem !important;
+    }
+    
+    /* Estilo limpio para los inputs */
+    div[data-baseweb="input"] {
+        border-radius: 8px !important;
+        background-color: #FFFFFF !important;
+        border: 1px solid #E5E7EB !important;
+    }
+    
+    /* Ajuste de la columna derecha (Imagen) para que no tenga márgenes blancos */
+    [data-testid="column"]:nth-of-type(2) {
+        background-color: #0C5A5D; /* Tu color primario */
+        padding: 0 !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # --- LAYOUT DE PANTALLA DIVIDIDA ---
-    # Columna Izquierda (40%): Login
-    # Columna Derecha (60%): Branding/Imagen (Como Hevy)
-    col_login, col_brand = st.columns([1, 1.5], gap="large")
+    # --- ESTRUCTURA DE PANTALLA COMPLETA ---
+    # Usamos columnas: 
+    # Columna 1 (Login): 35% del ancho
+    # Columna 2 (Imagen): 65% del ancho (El espacio vacío visual)
+    col_login, col_imagen = st.columns([1, 1.5], gap="large")
 
-    # --- COLUMNA IZQUIERDA: FORMULARIO ---
+    # --- IZQUIERDA: FORMULARIO ---
     with col_login:
         st.write("") 
         st.write("") 
-        st.write("") # Espaciado superior para centrar
+        st.write("") 
+        st.write("") # Espacio para bajarlo un poco visualmente
         
-        # Logo pequeño arriba
-        st.markdown("<h3 style='margin-bottom: 0;'>🍏 nutribere</h3>", unsafe_allow_html=True)
-        st.write("")
-        
-        # Título Grande "Log In"
-        st.markdown("<h1 style='font-size: 42px; font-weight: 700; margin-bottom: 10px;'>Iniciar Sesión</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #666 !important; margin-bottom: 30px;'>Bienvenida de nuevo a tu espacio de trabajo.</p>", unsafe_allow_html=True)
+        # Logo y Títulos
+        st.markdown("<h3 style='color: #0C5A5D; margin: 0;'>🍏 nutribere</h3>", unsafe_allow_html=True)
+        st.markdown("<h1 style='font-size: 48px; font-weight: 800; letter-spacing: -1px; margin-top: 10px; line-height: 1.1;'>Bienvenida<br>al sistema.</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #6B7280; font-size: 18px; margin-top: 10px; margin-bottom: 40px;'>Gestiona la logística alimentaria de tus pacientes en segundos.</p>", unsafe_allow_html=True)
 
-        # Inputs con etiquetas limpias
-        # Nota: Ponemos label_visibility="visible" porque en estilo limpio SÍ se usan etiquetas
-        st.markdown("<p style='font-weight: 600; font-size: 14px; margin-bottom: 5px;'>Contraseña</p>", unsafe_allow_html=True)
+        # Formulario
         password = st.text_input(
             "Contraseña", 
             type="password", 
             key="password_input",
-            label_visibility="collapsed", # Ocultamos la etiqueta nativa para usar la nuestra personalizada arriba
+            label_visibility="collapsed",
             placeholder="Introduce tu clave de acceso"
         )
         
         st.write("")
         
-        # Botón
-        if st.button("INGRESAR"):
+        # Botón (Tu config.toml ya le dará el color #0C5A5D automáticamente)
+        if st.button("INGRESAR AHORA", use_container_width=True, type="primary"):
             if password == st.secrets["PASSWORD_ACCESO"]:
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
-                st.error("La contraseña es incorrecta.")
+                st.error("🔒 Contraseña incorrecta")
+        
+        # Footer sutil
+        st.markdown("<p style='font-size: 12px; color: #9CA3AF; margin-top: 50px;'>© 2024 Nutribere Studio. Secure Access.</p>", unsafe_allow_html=True)
 
-        # Link falso de "Olvidé mi contraseña" (Solo estético)
-        st.markdown("<div style='text-align: center; margin-top: 20px;'><a href='#' style='color: #0C5A5D; text-decoration: none; font-size: 14px;'>¿Olvidaste tu contraseña?</a></div>", unsafe_allow_html=True)
-
-    # --- COLUMNA DERECHA: BRANDING (El lado "Bonito") ---
-    with col_brand:
-        # Aquí simulamos la imagen de la derecha. 
-        # Como no tengo una imagen tuya, crearé un bloque de color con texto elegante.
-        st.markdown("""
-        <div style="
-            background-color: #0C5A5D; 
-            border-radius: 20px; 
-            height: 85vh; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            color: white;
-            text-align: center;
-            padding: 40px;
-            background-image: linear-gradient(135deg, #0C5A5D 0%, #084042 100%);
-        ">
-            <h1 style="color: white !important; font-size: 50px;">Logística Inteligente <br>para Nutrición.</h1>
-            <p style="color: rgba(255,255,255,0.8) !important; font-size: 18px; margin-top: 20px; max-width: 400px;">
-                Genera listas de compra exactas, evita desperdicios y mejora la adherencia de tus pacientes.
-            </p>
-            <div style="margin-top: 40px; font-size: 80px;">🍏</div>
-        </div>
-        """, unsafe_allow_html=True)
+    # --- DERECHA: IMAGEN HERO ---
+    with col_imagen:
+        # Esta es una imagen vertical de alta calidad de Unsplash (Comida saludable / Estilo Clean)
+        # Ocupará todo el lado derecho
+        st.image(
+            "https://images.unsplash.com/photo-1543362906-ac1b4f87e9c9?q=80&w=2070&auto=format&fit=crop",
+            use_container_width=True
+        )
 
     return False
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
@@ -560,6 +506,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
