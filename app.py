@@ -326,9 +326,9 @@ def check_password():
     # --- 1. PANEL DE CONTROL (AJUSTA AQUÍ TUS PREFERENCIAS) ---
     
     # A. COLORES
-    COLOR_FONDO = "#FFFFFF"     # Blanco puro
-    COLOR_TEXTO = "#000000"     # Negro puro (Para arreglar lo del texto invisible)
-    COLOR_BOTON = "#0C5A5D"     # Tu verde
+    COLOR_FONDO = "#EAE8FF"     # Blanco puro
+    COLOR_TEXTO = "#2D3142"     # Negro puro (Para arreglar lo del texto invisible)
+    COLOR_BOTON = "#B0D7FF"     # Tu verde
     
     # B. CONTROL DE POSICIONES (La suma de todo no importa, es proporcional)
     # Juega con estos 4 números para mover las cosas:
@@ -544,6 +544,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
