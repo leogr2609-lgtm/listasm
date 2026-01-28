@@ -323,114 +323,122 @@ def check_password():
     if st.session_state.get("password_correct", False):
         return True
 
-    # --- 🎨 PANEL DE CONTROL DE DISEÑO (EDITA AQUÍ) ---
-    # Cambia estos códigos Hex para probar colores
-    COLOR_TITULO = "#111827"    # Gris muy oscuro (Casi negro)
-    COLOR_SUBTITULO = "#6B7280" # Gris medio
-    COLOR_BOTON = "#0C5A5D"     # Tu Verde Teal Original (O prueba #1F2937 para negro)
-    TEXTO_BOTON = "#FFFFFF"     # Color de la letra del botón
+    # --- 1. PANEL DE CONTROL (AJUSTA AQUÍ TUS PREFERENCIAS) ---
     
-    # Textos (Cámbialos aquí fácilmente)
-    TXT_TITULO = "Iniciar Sesión"
-    TXT_SUBTITULO = "Bienvenida de nuevo al sistema de logística."
-    IMG_DERECHA = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
+    # A. COLORES
+    COLOR_FONDO = "#FFFFFF"     # Blanco puro
+    COLOR_TEXTO = "#000000"     # Negro puro (Para arreglar lo del texto invisible)
+    COLOR_BOTON = "#0C5A5D"     # Tu verde
+    
+    # B. CONTROL DE POSICIONES (La suma de todo no importa, es proporcional)
+    # Juega con estos 4 números para mover las cosas:
+    ANCHO_ESPACIO_IZQ = 0.5  # Empuja el login hacia el centro
+    ANCHO_LOGIN = 1.0        # Qué tan ancho es el formulario
+    ANCHO_IMAGEN = 1.5       # Qué tan ancha es la imagen
+    ANCHO_ESPACIO_DER = 0.1  # <--- IMPORTANTE: Si subes esto, la imagen se despega de la derecha
+    
+    IMG_URL = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
 
-    # -------------------------------------------------------
+    # -----------------------------------------------------------
 
-    # --- CSS CORREGIDO ---
+    # --- 2. CSS "ROMPE-CONFIG" (PARA ARREGLAR EL TEXTO BLANCO) ---
     st.markdown(f"""
     <style>
-    /* 1. Limpieza General */
+    /* Forzar fondo blanco ignorando el tema */
     [data-testid="stAppViewContainer"] {{
-        background-color: #FFFFFF !important;
-    }}
-    header, footer {{visibility: hidden;}}
-    
-    /* 2. Tipografía (Sin sombras raras) */
-    h1, h2, h3, p, label {{
-        font-family: 'Inter', sans-serif !important;
-        text-shadow: none !important; /* <--- ADIÓS SOMBRA */
+        background-color: {COLOR_FONDO} !important;
     }}
     
-    /* 3. Inputs Limpios */
+    /* Forzar texto NEGRO en todos lados (Títulos, párrafos, etiquetas) */
+    h1, h2, h3, p, label, span, div {{
+        color: {COLOR_TEXTO} !important;
+        text-shadow: none !important;
+    }}
+    
+    /* INPUTS (Cajas de texto) */
+    /* Forzamos el texto de adentro a negro también */
     div[data-baseweb="input"] {{
         background-color: #FFFFFF !important;
-        border: 1px solid #E5E7EB !important;
-        border-radius: 8px !important;
+        border: 1px solid #D1D5DB !important;
+        color: #000000 !important;
+    }}
+    input {{
+        color: #000000 !important; /* Texto que escribes */
+        -webkit-text-fill-color: #000000 !important;
+        caret-color: #000000 !important; /* El palito que parpadea */
     }}
     
-    /* 4. Botón Personalizable */
+    /* BOTÓN */
     div[data-testid="stButton"] button {{
-        width: 100%;
-        background-color: {COLOR_BOTON} !important; /* Usa tu variable */
-        color: {TEXTO_BOTON} !important;
+        background-color: {COLOR_BOTON} !important;
+        color: #FFFFFF !important; /* Texto blanco en el botón */
         border: none;
-        padding: 12px !important;
-        font-weight: 600 !important;
-        border-radius: 8px !important;
-        transition: transform 0.1s;
+        padding: 12px;
+        font-weight: bold;
+        transition: opacity 0.3s;
     }}
     div[data-testid="stButton"] button:hover {{
         opacity: 0.9;
-        transform: scale(1.01);
     }}
 
-    /* 5. Ajuste de Imagen Derecha */
-    div[data-testid="column"]:last-child {{
-        padding-top: 0px;
-    }}
+    /* Ocultar elementos extra */
+    header, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-    # --- LAYOUT INTELIGENTE (LA SOLUCIÓN DE POSICIÓN) ---
-    # Usamos 3 columnas en lugar de 2:
-    # Col 1: ESPACIO VACÍO (Empuja todo a la derecha)
-    # Col 2: EL FORMULARIO (Donde trabajas)
-    # Col 3: LA IMAGEN (Lado derecho)
-    
-    # Ajusta estos números para moverlo más a la izq o der:
-    # [0.4 (Espacio), 1 (Formulario), 1.8 (Imagen)]
-    col_espacio, col_login, col_imagen = st.columns([0.4, 1, 1.8], gap="large")
+    # --- 3. LAYOUT DE 4 COLUMNAS (PARA CONTROL TOTAL) ---
+    col_izq, col_login, col_img, col_der = st.columns(
+        [ANCHO_ESPACIO_IZQ, ANCHO_LOGIN, ANCHO_IMAGEN, ANCHO_ESPACIO_DER], 
+        gap="medium"
+    )
 
-    # --- COLUMNA 2: EL FORMULARIO ---
+    # --- COLUMNA DEL FORMULARIO ---
     with col_login:
         st.write("") 
         st.write("") 
-        st.write("") 
+        st.write("") # Espacio superior para centrar verticalmente
         
-        # Logo
-        st.markdown("<h3 style='color: #0C5A5D !important; margin: 0; font-size: 18px;'>🍏 nutribere</h3>", unsafe_allow_html=True)
-        
-        # Título y Subtítulo (Usando las variables de arriba)
-        st.markdown(f"<h1 style='color: {COLOR_TITULO}; font-size: 36px; font-weight: 700; margin-top: 10px; margin-bottom: 5px; letter-spacing: -0.5px;'>{TXT_TITULO}</h1>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: {COLOR_SUBTITULO}; font-size: 15px; margin-bottom: 30px;'>{TXT_SUBTITULO}</p>", unsafe_allow_html=True)
+        st.markdown("<h3 style='margin:0; font-size:18px; color:#0C5A5D !important;'>🍏 nutribere</h3>", unsafe_allow_html=True)
+        st.markdown("<h1 style='font-size:36px; font-weight:800; margin-top:5px;'>Iniciar Sesión</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:14px; margin-bottom:30px; color:#666 !important;'>Ingresa tus credenciales de especialista.</p>", unsafe_allow_html=True)
 
-        # Input
-        st.markdown(f"<label style='color: {COLOR_TITULO}; font-weight: 500; font-size: 14px; margin-bottom: 5px; display:block;'>Contraseña</label>", unsafe_allow_html=True)
+        # --- CAMPO 1: USUARIO (NUEVO) ---
+        st.markdown("<label style='font-size:12px; font-weight:bold;'>USUARIO</label>", unsafe_allow_html=True)
+        usuario = st.text_input(
+            "Usuario",
+            key="user_input",
+            label_visibility="collapsed",
+            placeholder="Ej. nutri_berenice"
+        )
+        st.write("") # Pequeño espacio
+
+        # --- CAMPO 2: CONTRASEÑA ---
+        st.markdown("<label style='font-size:12px; font-weight:bold;'>CONTRASEÑA</label>", unsafe_allow_html=True)
         password = st.text_input(
             "Contraseña", 
             type="password", 
             key="password_input",
             label_visibility="collapsed",
-            placeholder="Introduce tu clave..."
+            placeholder="••••••••"
         )
         
         st.write("")
-        
-        # Botón
-        if st.button("INGRESAR", use_container_width=True):
+        st.write("")
+
+        # --- BOTÓN ---
+        if st.button("ACCEDER AL SISTEMA", use_container_width=True):
+            # AQUI LUEGO PUEDES AGREGAR LOGICA PARA VALIDAR EL USUARIO TAMBIÉN
             if password == st.secrets["PASSWORD_ACCESO"]:
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
-                st.error("🔒 Contraseña incorrecta")
-        
-        # Footer
-        st.markdown("<div style='margin-top: 40px; text-align: center;'><p style='color: #D1D5DB !important; font-size: 11px;'>Secure Access © 2026</p></div>", unsafe_allow_html=True)
+                st.error("🔒 Credenciales incorrectas")
 
-    # --- COLUMNA 3: IMAGEN ---
-    with col_imagen:
-        st.image(IMG_DERECHA, use_container_width=True)
+    # --- COLUMNA DE IMAGEN ---
+    with col_img:
+        st.image(IMG_URL, use_container_width=True)
+        
+    # La col_der se queda vacía, solo sirve para empujar la imagen a la izquierda.
 
     return False
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
@@ -536,6 +544,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
