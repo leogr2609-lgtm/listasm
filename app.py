@@ -317,164 +317,146 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
 
 # --- 6. INTERFAZ PRINCIPAL ---
 import streamlit as st
-
-
 def check_password():
-    """Retorna True si el usuario ingresó la contraseña correcta (clave única)."""
-
+    """Retorna True si el usuario ingresó la contraseña correcta."""
+    
     if st.session_state.get("password_correct", False):
         return True
 
-    st.set_page_config(
-        page_title="nutribere",
-        page_icon="🍏",
-        layout="centered",
-        initial_sidebar_state="collapsed",
-    )
+    # --- ESTILO TIPO "HEVY" (SaaS CLEAN) ---
+    st.markdown("""
+    <style>
+    /* 1. FORZAR MODO CLARO (WHITE MODE) */
+    /* Esto obliga a que el fondo sea blanco aunque tu navegador esté en oscuro */
+    [data-testid="stAppViewContainer"] {
+        background-color: #FFFFFF !important;
+    }
+    [data-testid="stHeader"] {
+        background-color: rgba(0,0,0,0) !important;
+    }
+    
+    /* 2. TEXTOS EN NEGRO */
+    h1, h2, h3, p, label, span, div {
+        color: #1A1A1A !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
-    st.markdown(
-        """
-        <style>
-        /* Fondo (profesional, con profundidad) */
-        .stApp{
-            background:
-              radial-gradient(1000px 520px at 50% 18%, rgba(255,255,255,0.10), rgba(0,0,0,0) 60%),
-              linear-gradient(180deg, #0C5A5D 0%, #083E40 100%);
-        }
+    /* 3. INPUTS (Estilo Hevy: Borde gris suave, fondo blanco, esquinas redondeadas) */
+    div[data-baseweb="input"] {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E0E0E0 !important;
+        border-radius: 8px !important;
+        padding: 4px !important;
+    }
+    /* Arreglo del input de password y texto */
+    input {
+        color: #000000 !important;
+        background-color: #FFFFFF !important;
+    }
+    
+    /* 4. BOTÓN (Estilo Hevy: Ancho completo, Gris o Color Marca) */
+    div[data-testid="stButton"] button {
+        width: 100%;
+        background-color: #0C5A5D !important; /* Tu color Teal */
+        color: #FFFFFF !important; /* Texto Blanco */
+        border: none;
+        padding: 12px;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: background-color 0.3s;
+        margin-top: 10px;
+    }
+    div[data-testid="stButton"] button:hover {
+        background-color: #094648 !important; /* Un poco más oscuro al hover */
+        box-shadow: 0 4px 12px rgba(12, 90, 93, 0.2);
+    }
 
-        /* Ocultar UI Streamlit */
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
-        div[data-testid="stToolbar"] {visibility: hidden;}
+    /* Ocultar elementos innecesarios */
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Ajuste para la columna de la derecha (Imagen/Brand) */
+    .brand-column {
+        background-color: #F4F6F8;
+        border-radius: 20px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-        /* Centrado vertical suave */
-        div[data-testid="stVerticalBlock"]{
-            padding-top: 12vh;
-        }
+    # --- LAYOUT DE PANTALLA DIVIDIDA ---
+    # Columna Izquierda (40%): Login
+    # Columna Derecha (60%): Branding/Imagen (Como Hevy)
+    col_login, col_brand = st.columns([1, 1.5], gap="large")
 
-        /* Tarjeta SaaS: más contraste y bordes más definidos */
-        .nb-card{
-            background: #FFFFFF;
-            border: 1px solid rgba(17,24,39,0.10);
-            border-radius: 18px;
-            box-shadow:
-                0 24px 70px rgba(0,0,0,0.28),
-                0 1px 0 rgba(255,255,255,0.30) inset;
-            padding: 2.15rem 2.15rem 1.45rem 2.15rem;
-            backdrop-filter: blur(6px);
-            max-width: 420px;
-            margin: 0 auto;
-        }
+    # --- COLUMNA IZQUIERDA: FORMULARIO ---
+    with col_login:
+        st.write("") 
+        st.write("") 
+        st.write("") # Espaciado superior para centrar
+        
+        # Logo pequeño arriba
+        st.markdown("<h3 style='margin-bottom: 0;'>🍏 nutribere</h3>", unsafe_allow_html=True)
+        st.write("")
+        
+        # Título Grande "Log In"
+        st.markdown("<h1 style='font-size: 42px; font-weight: 700; margin-bottom: 10px;'>Iniciar Sesión</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #666 !important; margin-bottom: 30px;'>Bienvenida de nuevo a tu espacio de trabajo.</p>", unsafe_allow_html=True)
 
-        /* Marca */
-        .nb-icon{
-            font-size: 46px;
-            line-height: 1;
-            text-align: center;
-            margin: 0 0 0.55rem 0;
-        }
-        .nb-title{
-            font-size: 34px;
-            font-weight: 850;
-            letter-spacing: -0.9px;
-            margin: 0;
-            color: #0C5A5D;
-            text-align: center;
-        }
-        .nb-sub{
-            margin: 0.45rem 0 1.25rem 0;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 1.6px;
-            text-transform: uppercase;
-            color: rgba(17,24,39,0.55);
-            text-align: center;
-        }
-
-        /* Input: más “SaaS”, mejor contraste */
-        div[data-baseweb="input"]{
-            background: #F7F8FA !important;
-            border: 1px solid rgba(17,24,39,0.14) !important;
-            border-radius: 12px !important;
-            padding: 6px 10px !important;
-            transition: border-color .15s ease, box-shadow .15s ease;
-        }
-        div[data-baseweb="input"]:focus-within{
-            border-color: rgba(12,90,93,0.65) !important;
-            box-shadow: 0 0 0 4px rgba(12,90,93,0.14) !important;
-        }
-        input{
-            color: rgba(17,24,39,0.86) !important;
-            font-weight: 650 !important;
-        }
-
-        /* Botón */
-        .stButton > button{
-            width: 100% !important;
-            background: #FBC02D !important;
-            color: #083E40 !important;
-            font-weight: 900 !important;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            border: none !important;
-            border-radius: 12px !important;
-            padding: 14px 16px !important;
-            margin-top: 12px !important;
-            box-shadow: 0 10px 22px rgba(251,192,45,0.38) !important;
-            transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
-        }
-        .stButton > button:hover{
-            transform: translateY(-1px);
-            box-shadow: 0 14px 28px rgba(251,192,45,0.48) !important;
-            filter: brightness(1.02);
-        }
-
-        /* Footer dentro de tarjeta */
-        .nb-foot{
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 11px;
-            color: rgba(17,24,39,0.35);
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Layout: centro estable (sin selectores frágiles)
-    col_left, col_center, col_right = st.columns([1, 1.35, 1])
-
-    with col_center:
-        st.markdown("<div class='nb-card'>", unsafe_allow_html=True)
-
-        st.markdown("<div class='nb-icon'>🍏</div>", unsafe_allow_html=True)
-        st.markdown("<h1 class='nb-title'>nutribere</h1>", unsafe_allow_html=True)
-        st.markdown("<div class='nb-sub'>Logística alimentaria</div>", unsafe_allow_html=True)
-
+        # Inputs con etiquetas limpias
+        # Nota: Ponemos label_visibility="visible" porque en estilo limpio SÍ se usan etiquetas
+        st.markdown("<p style='font-weight: 600; font-size: 14px; margin-bottom: 5px;'>Contraseña</p>", unsafe_allow_html=True)
         password = st.text_input(
-            "Password",
-            type="password",
+            "Contraseña", 
+            type="password", 
             key="password_input",
-            label_visibility="collapsed",
-            placeholder="🔑 Ingresa tu clave de acceso",
+            label_visibility="collapsed", # Ocultamos la etiqueta nativa para usar la nuestra personalizada arriba
+            placeholder="Introduce tu clave de acceso"
         )
-
-        if st.button("Acceder a plataforma"):
+        
+        st.write("")
+        
+        # Botón
+        if st.button("INGRESAR"):
             if password == st.secrets["PASSWORD_ACCESO"]:
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
-                st.error("Clave incorrecta")
+                st.error("La contraseña es incorrecta.")
 
-        st.markdown("<div class='nb-foot'>© 2026 Nutribere Studio</div>", unsafe_allow_html=True)
+        # Link falso de "Olvidé mi contraseña" (Solo estético)
+        st.markdown("<div style='text-align: center; margin-top: 20px;'><a href='#' style='color: #0C5A5D; text-decoration: none; font-size: 14px;'>¿Olvidaste tu contraseña?</a></div>", unsafe_allow_html=True)
 
-        st.markdown("</div>", unsafe_allow_html=True)
+    # --- COLUMNA DERECHA: BRANDING (El lado "Bonito") ---
+    with col_brand:
+        # Aquí simulamos la imagen de la derecha. 
+        # Como no tengo una imagen tuya, crearé un bloque de color con texto elegante.
+        st.markdown("""
+        <div style="
+            background-color: #0C5A5D; 
+            border-radius: 20px; 
+            height: 85vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            color: white;
+            text-align: center;
+            padding: 40px;
+            background-image: linear-gradient(135deg, #0C5A5D 0%, #084042 100%);
+        ">
+            <h1 style="color: white !important; font-size: 50px;">Logística Inteligente <br>para Nutrición.</h1>
+            <p style="color: rgba(255,255,255,0.8) !important; font-size: 18px; margin-top: 20px; max-width: 400px;">
+                Genera listas de compra exactas, evita desperdicios y mejora la adherencia de tus pacientes.
+            </p>
+            <div style="margin-top: 40px; font-size: 80px;">🍏</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     return False
-
-
-
-
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
 def limpiar_memoria():
     """Esta función se activa SOLA cuando cambias el archivo PDF."""
@@ -578,6 +560,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
