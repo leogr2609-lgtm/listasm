@@ -319,18 +319,99 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
 
 def check_password():
     """Retorna True si el usuario ingresó la contraseña correcta."""
+    
     if st.session_state.get("password_correct", False):
         return True
 
-    st.text_input("🔐 Contraseña de Acceso", type="password", key="password_input")
+    # --- CSS ESPECÍFICO PARA EL LOGIN (ESTILO MATERIAL POMODORO) ---
+    st.markdown("""
+    <style>
+    /* Ocultamos elementos extra de Streamlit para limpiar la vista */
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Fondo general más limpio para el login */
+    .stApp {
+        background-color: #0C5A5D; /* Mantenemos tu Teal de marca */
+    }
 
-    if "password_input" in st.session_state:
-        password = st.session_state["password_input"]
-        if password == st.secrets["PASSWORD_ACCESO"]:
-            st.session_state["password_correct"] = True
-            st.rerun()
-        elif password:
-            st.error("❌ Contraseña incorrecta")
+    /* ESTILO DE LA TARJETA (Material Card) */
+    div[data-testid="stVerticalBlock"] > div[style*="background-color"] {
+        background-color: white !important;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2); /* Sombra suave "elevada" */
+        padding: 40px;
+        border: none; /* Quitamos bordes duros */
+    }
+
+    /* INPUT (Estilo Material Design: Fondo grisáceo, línea inferior) */
+    div[data-baseweb="input"] {
+        background-color: #F5F5F5 !important;
+        border: none;
+        border-radius: 4px 4px 0 0;
+        border-bottom: 2px solid #0C5A5D;
+    }
+    input {
+        color: #333333 !important;
+        font-weight: 500;
+    }
+
+    /* BOTÓN (Estilo Material: Sombra, Mayúsculas, Sin bordes) */
+    .stButton>button {
+        width: 100%;
+        background-color: #FBC02D !important;
+        color: #0C5A5D !important;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 4px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border: none;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # --- ESTRUCTURA CENTRADA (GRID 1-2-1) ---
+    col1, col2, col3 = st.columns([1, 1.5, 1])
+
+    with col2:
+        st.write("") 
+        st.write("") 
+        st.write("") # Espacio superior para centrar verticalmente
+        
+        # CONTENEDOR TIPO "CARD"
+        with st.container():
+            # 1. Logotipo / Identidad Minimalista
+            st.markdown("<h2 style='text-align: center; color: #0C5A5D; margin-bottom: 0;'>🍏 nutribere</h2>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center; color: #777; font-size: 14px; margin-top: 5px;'>Logística Alimentaria Inteligente</p>", unsafe_allow_html=True)
+            
+            st.write("---")
+            
+            # 2. Input Limpio (Sin etiqueta arriba, usaremos placeholder)
+            password = st.text_input(
+                "Contraseña", 
+                type="password", 
+                key="password_input",
+                label_visibility="collapsed", 
+                placeholder="Ingresa tu clave de acceso"
+            )
+            
+            st.write("") # Espaciador
+            
+            # 3. Botón de Acción Principal
+            if st.button("INICIAR SESIÓN"):
+                if password == st.secrets["PASSWORD_ACCESO"]:
+                    st.session_state["password_correct"] = True
+                    st.rerun()
+                else:
+                    st.error("🔒 Clave incorrecta")
+
     return False
 
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
@@ -436,6 +517,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
