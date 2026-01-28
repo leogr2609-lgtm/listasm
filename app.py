@@ -317,116 +317,182 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
 
 # --- 6. INTERFAZ PRINCIPAL ---
 
+import streamlit as st
+
 def check_password():
     """Retorna True si el usuario ingresó la contraseña correcta."""
-    
+
     if st.session_state.get("password_correct", False):
         return True
 
-    # --- DISEÑO PROFESIONAL "MATERIAL CARD" ---
-    st.markdown("""
-    <style>
-    /* 1. EL FONDO DE PANTALLA (Tu Teal de Marca) */
-    .stApp {
-        background-color: #0C5A5D;
-    }
+    st.markdown(
+        """
+        <style>
+        /* ====== APP BACKGROUND ====== */
+        .stApp {
+            background: radial-gradient(1200px 700px at 50% 20%, rgba(255,255,255,0.06), rgba(0,0,0,0) 60%),
+                        linear-gradient(180deg, #0C5A5D 0%, #0A4D50 100%);
+        }
 
-    /* 2. LA TARJETA CENTRAL (La "Isla" blanca) */
-    /* Buscamos el contenedor vertical dentro de la columna central */
-    div[data-testid="column"] > div > div[data-testid="stVerticalBlock"] > div[style*="background-color"] {
-        background-color: #FFFFFF !important;
-        padding: 3rem !important;
-        border-radius: 15px !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important; /* Sombra fuerte para efecto 3D */
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-    
-    /* 3. INPUT (Estilo limpio y moderno) */
-    /* Quitamos bordes feos y ponemos una línea abajo o fondo suave */
-    div[data-baseweb="input"] {
-        background-color: #F8F9FA !important; /* Gris muy clarito */
-        border: 1px solid #E0E0E0 !important;
-        border-radius: 8px !important;
-        padding: 5px !important;
-    }
-    input {
-        color: #333 !important;
-        font-weight: 500 !important;
-    }
+        /* Ocultar UI Streamlit */
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        div[data-testid="stToolbar"] {visibility: hidden;}
 
-    /* 4. BOTÓN (Grande, Ancho y Llamativo) */
-    .stButton > button {
-        width: 100% !important;
-        background-color: #FBC02D !important; /* Tu amarillo */
-        color: #0C5A5D !important; /* Texto verde oscuro */
-        font-weight: 800 !important;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        border: none !important;
-        border-radius: 8px !important;
-        padding: 15px !important;
-        margin-top: 10px !important;
-        box-shadow: 0 4px 10px rgba(251, 192, 45, 0.4) !important; /* Resplandor amarillo */
-        transition: all 0.3s ease;
-    }
-    
-    .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(251, 192, 45, 0.6) !important;
-    }
+        /* ====== CENTER LAYOUT ====== */
+        /* Empuja el contenido al centro vertical/horizontal (sin st.write vacíos) */
+        .login-shell{
+            min-height: calc(100vh - 2rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1rem;
+        }
 
-    /* Ocultar elementos molestos de Streamlit */
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
-    div[data-testid="stToolbar"] {visibility: hidden;}
-    </style>
-    """, unsafe_allow_html=True)
+        /* ====== CARD ====== */
+        .login-card{
+            width: 100%;
+            max-width: 520px;
+            background: rgba(255,255,255,0.96);
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 18px;
+            box-shadow: 0 18px 60px rgba(0,0,0,0.22);
+            padding: 2.25rem 2.25rem 1.5rem 2.25rem;
+            backdrop-filter: blur(6px);
+        }
 
-    # --- ESTRUCTURA VISUAL ---
-    # Usamos columnas para centrar. [Espacio, TARJETA, Espacio]
-    col_izq, col_centro, col_der = st.columns([1, 1.2, 1])
+        .brand-wrap{
+            text-align: center;
+            margin-bottom: 1.35rem;
+        }
 
-    with col_centro:
-        # Espacio para empujar hacia abajo (centrado vertical manual)
-        st.write("") 
-        st.write("") 
-        st.write("") 
-        
-        # AQUÍ EMPIEZA LA "CAJA" BLANCA
-        # Al poner un container, el CSS de arriba lo detecta y lo pinta de blanco
-        with st.container():
-            
-            # LOGO E IDENTIDAD
-            st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-            # Icono grande
-            st.markdown("<h1 style='font-size: 60px; margin-bottom: -10px;'>🍏</h1>", unsafe_allow_html=True)
-            # Título elegante
-            st.markdown("<h2 style='color: #0C5A5D; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px;'>nutribere</h2>", unsafe_allow_html=True)
-            # Subtítulo gris
-            st.markdown("<p style='color: #888; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 25px;'>Logística Alimentaria</p>", unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
+        .brand-icon{
+            font-size: 44px;
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
 
-            # INPUT
-            password = st.text_input(
-                "Password", 
-                type="password", 
-                key="password_input",
-                label_visibility="collapsed",
-                placeholder="🔑 Ingresa tu clave de acceso"
-            )
-            
-            # BOTÓN
-            if st.button("ACCEDER A PLATAFORMA"):
-                if password == st.secrets["PASSWORD_ACCESO"]:
-                    st.session_state["password_correct"] = True
-                    st.rerun()
-                else:
-                    st.error("⛔ Clave incorrecta")
-            
-            # PIE DE TARJETA (Copyright falso para dar seriedad)
-            st.markdown("<p style='text-align: center; color: #CCC; font-size: 10px; margin-top: 20px;'>© 2024 Nutribere Studio v1.0</p>", unsafe_allow_html=True)
+        .brand-title{
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+            margin: 0;
+            color: #0C5A5D;
+        }
+
+        .brand-subtitle{
+            margin: 0.35rem 0 0 0;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: rgba(0,0,0,0.55);
+        }
+
+        /* ====== INPUT ====== */
+        /* Wrapper del input de Streamlit (BaseWeb) */
+        div[data-baseweb="input"]{
+            background: #F7F8FA !important;
+            border: 1px solid rgba(0,0,0,0.12) !important;
+            border-radius: 12px !important;
+            padding: 6px 10px !important;
+            box-shadow: none !important;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+
+        /* Cuando el input está enfocado: Streamlit suele aplicar :focus-within al wrapper */
+        div[data-baseweb="input"]:focus-within{
+            border-color: rgba(12,90,93,0.55) !important;
+            box-shadow: 0 0 0 4px rgba(12,90,93,0.12) !important;
+        }
+
+        input{
+            color: rgba(0,0,0,0.82) !important;
+            font-weight: 600 !important;
+        }
+
+        /* ====== BUTTON ====== */
+        .stButton > button{
+            width: 100% !important;
+            background: #FBC02D !important;
+            color: #083E40 !important;
+            font-weight: 900 !important;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 14px 16px !important;
+            margin-top: 12px !important;
+            box-shadow: 0 10px 22px rgba(251,192,45,0.35) !important;
+            transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+        }
+
+        .stButton > button:hover{
+            transform: translateY(-1px);
+            box-shadow: 0 14px 28px rgba(251,192,45,0.45) !important;
+            filter: brightness(1.02);
+        }
+
+        .stButton > button:active{
+            transform: translateY(0px);
+            box-shadow: 0 10px 22px rgba(251,192,45,0.32) !important;
+        }
+
+        /* ====== ERROR MESSAGE (más sobrio) ====== */
+        div[data-testid="stAlert"]{
+            border-radius: 12px !important;
+        }
+
+        /* ====== FOOTER TEXT ====== */
+        .login-foot{
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 11px;
+            color: rgba(0,0,0,0.35);
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("<div class='login-shell'><div class='login-card'>", unsafe_allow_html=True)
+
+    # BRAND
+    st.markdown(
+        """
+        <div class="brand-wrap">
+            <div class="brand-icon">🍏</div>
+            <h1 class="brand-title">nutribere</h1>
+            <p class="brand-subtitle">Logística alimentaria</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # INPUT
+    password = st.text_input(
+        "Password",
+        type="password",
+        key="password_input",
+        label_visibility="collapsed",
+        placeholder="🔑 Ingresa tu clave de acceso"
+    )
+
+    # BUTTON
+    if st.button("Acceder a plataforma"):
+        if password == st.secrets["PASSWORD_ACCESO"]:
+            st.session_state["password_correct"] = True
+            st.rerun()
+        else:
+            st.error("Clave incorrecta")
+
+    # FOOTER
+    st.markdown("<div class='login-foot'>© 2026 Nutribere Studio</div>", unsafe_allow_html=True)
+
+    st.markdown("</div></div>", unsafe_allow_html=True)
 
     return False
+
 
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
 def limpiar_memoria():
@@ -531,6 +597,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
