@@ -325,14 +325,13 @@ def check_password():
 
     # --- 🎛️ PANEL DE CONTROL DE DISEÑO ---
     
-    # 1. PROPORCIONES (Layout de 4 Columnas)
-    # Estructura: [Espacio Izq | Formulario | Separador | Imagen]
-    ANCHO_ESPACIO_IZQ = 0.8   # Aumentado (+10%) para centrar más el formulario
-    ANCHO_FORMULARIO = 1.4    # El ancho de la caja de login
-    ANCHO_SEPARADOR = 0.4     # Espacio EXTRA entre formulario e imagen (Margen derecho del form)
-    ANCHO_IMAGEN = 3.2        # Imagen grande a la derecha
+    # 1. PROPORCIONES
+    ANCHO_ESPACIO_IZQ = 0.8
+    ANCHO_FORMULARIO = 1.4
+    ANCHO_SEPARADOR = 0.4
+    ANCHO_IMAGEN = 3.2
     
-    # 2. CONTENIDO (Español | Contexto Nutribere)
+    # 2. CONTENIDO
     TXT_TITULO = "Portal de Especialista"
     TXT_DESC = "Automatiza la logística de tus planes nutricionales. Convierte dietas en listas de compra exactas en segundos."
     IMG_URL = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
@@ -340,14 +339,13 @@ def check_password():
     # 3. COLORES
     COLOR_FONDO = "#FFFFFF"
     COLOR_TEXTO = "#111827"   # Negro suave
-    COLOR_BOTON = "#0C5A5D"   # Tu Verde Teal (Marca)
+    COLOR_BOTON = "#0C5A5D"   # Tu Verde Teal
     
     # -----------------------------------------------------------
 
-    # --- CSS DE ALTA PRECISIÓN ---
+    # --- CSS ---
     st.markdown(f"""
     <style>
-    /* 1. RESET GENERAL Y MODO CLARO */
     [data-testid="stAppViewContainer"] {{
         background-color: {COLOR_FONDO} !important;
     }}
@@ -356,18 +354,17 @@ def check_password():
         letter-spacing: -0.2px;
     }}
     
-    /* 2. TEXTOS Y COLORES */
+    /* Reglas generales de respaldo */
     h1, h2, h3, p, label, a {{
         color: {COLOR_TEXTO} !important;
         text-shadow: none !important;
     }}
     
-    /* 3. INPUTS PROFESIONALES */
     div[data-baseweb="input"] {{
         background-color: #FFFFFF !important;
         border: 1px solid #E5E7EB !important;
         border-radius: 8px !important;
-        padding: 8px !important; /* Un poco más de aire dentro del input */
+        padding: 8px !important;
     }}
     input {{
         color: #000000 !important;
@@ -375,7 +372,6 @@ def check_password():
         font-weight: 500 !important;
     }}
     
-    /* 4. BOTÓN DE ACCIÓN */
     div[data-testid="stButton"] button {{
         width: 100%;
         background-color: {COLOR_BOTON} !important;
@@ -394,52 +390,44 @@ def check_password():
         box-shadow: 0 6px 12px rgba(12, 90, 93, 0.2);
     }}
 
-    /* 5. FULL BLEED IMAGEN (El truco para pegar la imagen a la derecha) */
-    /* Seleccionamos la ÚLTIMA columna y le quitamos todo el padding */
     div[data-testid="column"]:last-child {{
-        padding-top: 0px !important;
-        padding-right: 0px !important; /* PEGA LA IMAGEN AL BORDE DERECHO */
-        padding-bottom: 0px !important;
+        padding: 0px !important;
     }}
-    /* Aseguramos que el contenedor principal no estorbe */
     .block-container {{
         padding-top: 0rem !important;
         padding-bottom: 0rem !important;
-        padding-right: 0rem !important; /* CRÍTICO */
+        padding-right: 0rem !important;
         max-width: 100% !important;
     }}
-    
-    /* Ocultar elementos extra */
     header, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-    # --- LAYOUT DE 4 COLUMNAS ---
-    # [ Espacio | Formulario | Separador | Imagen ]
     col_izq, col_form, col_sep, col_img = st.columns(
         [ANCHO_ESPACIO_IZQ, ANCHO_FORMULARIO, ANCHO_SEPARADOR, ANCHO_IMAGEN], 
         gap="small"
     )
 
-    # --- COLUMNA DEL FORMULARIO ---
     with col_form:
-        # Espaciadores verticales para centrar el contenido en la pantalla
         st.write("") 
         st.write("") 
         st.write("") 
         st.write("")
         st.write("")
         
-        # 1. HEADER (Logo y Títulos)
+        # 1. HEADER
         st.markdown("<h3 style='font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #0C5A5D !important;'>🍏 nutribere studio</h3>", unsafe_allow_html=True)
-        st.markdown(f"<h1 style='font-size: 38px; font-weight: 800; line-height: 1.1; margin-bottom: 10px;'>{TXT_TITULO}</h1>", unsafe_allow_html=True)
+        
+        # --- AQUÍ ESTABA EL ERROR: AGREGUÉ color: {COLOR_TEXTO} !important; ---
+        st.markdown(f"<h1 style='font-size: 38px; font-weight: 800; line-height: 1.1; margin-bottom: 10px; color: {COLOR_TEXTO} !important;'>{TXT_TITULO}</h1>", unsafe_allow_html=True)
+        
         st.markdown(f"<p style='font-size: 16px; font-weight: 400; color: #6B7280 !important; line-height: 1.5; margin-bottom: 35px;'>{TXT_DESC}</p>", unsafe_allow_html=True)
 
         # 2. INPUTS
         st.markdown("<label style='font-size: 13px; font-weight: 600; color: #374151 !important;'>USUARIO</label>", unsafe_allow_html=True)
         usuario = st.text_input("Usuario", key="user_input", label_visibility="collapsed", placeholder="ej. berenice_admin")
         
-        st.write("") # Pequeño espacio
+        st.write("")
         
         st.markdown("<label style='font-size: 13px; font-weight: 600; color: #374151 !important;'>CONTRASEÑA DE ACCESO</label>", unsafe_allow_html=True)
         password = st.text_input("Contraseña", type="password", key="password_input", label_visibility="collapsed", placeholder="••••••••")
@@ -452,7 +440,7 @@ def check_password():
             else:
                 st.error("🔒 Credenciales incorrectas")
 
-        # 4. FOOTER (Estilo SaaS)
+        # 4. FOOTER
         st.write("")
         st.write("")
         st.markdown("""
@@ -470,7 +458,6 @@ def check_password():
             </div>
         """, unsafe_allow_html=True)
 
-    # --- COLUMNA DE IMAGEN (SIN MÁRGENES) ---
     with col_img:
         st.image(IMG_URL, use_container_width=True)
 
@@ -578,6 +565,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
