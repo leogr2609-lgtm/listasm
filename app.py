@@ -323,49 +323,63 @@ def check_password():
     if st.session_state.get("password_correct", False):
         return True
 
-    # --- 🎛️ PANEL DE CONTROL (AJUSTA AQUÍ) ---
-    TXT_MARCA = "🍏 nutribere studio"
-    TXT_TITULO = "Portal de Especialista"
-    TXT_DESC = "Automatiza la logística de tus planes nutricionales. Convierte dietas en listas de compra exactas en segundos."
-    
-    # PROPORCIONES
-    ANCHO_ESPACIO_IZQ = 0.8
-    ANCHO_FORMULARIO = 1.4
-    ANCHO_SEPARADOR = 0.4
-    ANCHO_IMAGEN = 3.2
-    
+    # --- 🎛️ VARIABLES DE DISEÑO ---
+    IMG_URL = "login_hero.png" # Tu imagen generada
     COLOR_BOTON = "#0C5A5D"
-    IMG_URL = "hero.webp" # Cambia esto por el nombre de tu archivo
 
-    # -----------------------------------------------------------
-
-    # --- CSS DE PRECISIÓN (SOLUCIONA EL ALTO DE LA IMAGEN) ---
+    # --- 📱 CSS RESPONSIVO AVANZADO ---
     st.markdown(f"""
     <style>
-    /* 1. RESET Y FONDO */
+    /* 1. RESET TOTAL */
     [data-testid="stAppViewContainer"] {{
-        background-color: #FFFFFF !important;
-        overflow-x: hidden; /* Evita movimientos raros laterales */
+        background-color: white !important;
     }}
-    
-    /* 2. FORZAR ALTO DE LA IMAGEN (EL TRUCO) */
-    /* Target específico a la imagen en la última columna */
-    div[data-testid="column"]:last-child img {{
-        height: 100vh !important; /* Altura exacta de la pantalla */
-        width: 100% !important;
-        object-fit: cover !important; /* Recorta la imagen para que no se estire */
-        object-position: center; /* Centra el recorte */
+    header, footer {{visibility: hidden;}}
+    .block-container {{ padding: 0 !important; max-width: 100% !important; }}
+
+    /* 2. FORZAR TEXTOS NEGROS (Para evitar el modo oscuro) */
+    h1, h2, h3, p, label, span, div {{
+        color: black !important;
+        -webkit-text-fill-color: black !important;
+        text-shadow: none !important;
+        font-family: -apple-system, sans-serif !important;
     }}
 
-    /* 3. FORZAR TEXTOS NEGROS */
-    h1, h2, h3, p, label, span, div {{
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
-        text-shadow: none !important;
-        font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
-    }}
+    /* 3. LÓGICA RESPONSIVA (MEDIA QUERIES) */
     
-    /* 4. INPUTS Y BOTÓN */
+    /* EN PANTALLAS GRANDES (PC/Laptop) */
+    @media (min-width: 1024px) {{
+        .login-container {{
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }}
+        .form-side {{
+            width: 40%;
+            padding: 5% 8%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centrado vertical real */
+        }}
+        .image-side {{
+            width: 60%;
+            height: 100vh;
+            background-image: url("{IMG_URL}");
+            background-size: cover;
+            background-position: center;
+        }}
+    }}
+
+    /* EN PANTALLAS PEQUEÑAS (Móvil) */
+    @media (max-width: 1023px) {{
+        .image-side {{ display: none; }} /* Ocultamos la imagen para que no estorbe */
+        .form-side {{
+            width: 100%;
+            padding: 40px 20px;
+        }}
+    }}
+
+    /* 4. ESTILO DE COMPONENTES */
     div[data-baseweb="input"] {{
         background-color: #FFFFFF !important;
         border: 1px solid #E5E7EB !important;
@@ -376,79 +390,52 @@ def check_password():
     div[data-testid="stButton"] button {{
         width: 100%;
         background-color: {COLOR_BOTON} !important;
-        color: #FFFFFF !important;
-        -webkit-text-fill-color: #FFFFFF !important;
-        border: none;
-        padding: 14px !important;
-        font-weight: 600 !important;
+        color: white !important;
+        -webkit-text-fill-color: white !important;
         border-radius: 8px !important;
+        padding: 12px !important;
+        font-weight: 600 !important;
     }}
-
-    /* 5. ELIMINAR MÁRGENES DE STREAMLIT (FULL BLEED) */
-    div[data-testid="column"]:last-child {{
-        padding: 0px !important;
-        margin: 0px !important;
-    }}
-    .block-container {{
-        padding: 0rem !important; /* Pegado arriba y abajo */
-        max-width: 100% !important;
-    }}
-    header, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-    # --- LAYOUT DE 4 COLUMNAS ---
-    col_izq, col_form, col_sep, col_img = st.columns(
-        [ANCHO_ESPACIO_IZQ, ANCHO_FORMULARIO, ANCHO_SEPARADOR, ANCHO_IMAGEN], 
-        gap="small"
-    )
+    # --- ESTRUCTURA HTML (Para control total del layout) ---
+    # Usamos st.container pero inyectamos divs para que el CSS funcione
+    st.markdown('<div class="login-container">', unsafe_allow_html=True)
+    
+    col_form, col_img = st.columns([1, 1.5], gap="small")
 
-    # --- FORMULARIO ---
     with col_form:
-        st.write("") 
-        st.write("") 
-        st.write("") 
-        st.write("")
+        st.markdown('<div class="form-side">', unsafe_allow_html=True)
+        
+        st.markdown("<h3 style='color: #0C5A5D !important; -webkit-text-fill-color: #0C5A5D !important;'>🍏 nutribere studio</h3>", unsafe_allow_html=True)
+        st.markdown("<h1 style='margin-top: 10px; font-size: 32px;'>Iniciar Sesión</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #6B7280 !important;'>Ingresa tus credenciales para acceder.</p>", unsafe_allow_html=True)
+        
         st.write("")
         
-        # MARCA Y TÍTULOS
-        st.markdown(f"<h3 style='color: #0C5A5D !important; -webkit-text-fill-color: #0C5A5D !important; font-size: 18px; font-weight: 600; margin-bottom: 15px;'>{TXT_MARCA}</h3>", unsafe_allow_html=True)
-        st.markdown(f"<h1 style='color: black !important; -webkit-text-fill-color: black !important; font-size: 38px; font-weight: 800; line-height: 1.1; margin-bottom: 10px;'>{TXT_TITULO}</h1>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: #6B7280 !important; -webkit-text-fill-color: #6B7280 !important; font-size: 16px; margin-bottom: 35px;'>{TXT_DESC}</p>", unsafe_allow_html=True)
-
-        # --- INPUT 1: USUARIO ---
+        # Inputs
         st.markdown("<label style='font-size: 13px; font-weight: 600;'>USUARIO</label>", unsafe_allow_html=True)
-        usuario_ingresado = st.text_input("User", key="user_input", label_visibility="collapsed", placeholder="ej. nutri_bere")
+        usuario = st.text_input("User", key="user_input", label_visibility="collapsed", placeholder="ej. nutri_bere")
         
         st.write("")
         
-        # --- INPUT 2: CONTRASEÑA ---
         st.markdown("<label style='font-size: 13px; font-weight: 600;'>CONTRASEÑA</label>", unsafe_allow_html=True)
-        password_ingresada = st.text_input("Pass", type="password", key="password_input", label_visibility="collapsed", placeholder="••••••••")
+        password = st.text_input("Pass", type="password", key="password_input", label_visibility="collapsed", placeholder="••••••••")
         
-        # BOTÓN CON VALIDACIÓN DOBLE
-        if st.button("INGRESAR AL SISTEMA", use_container_width=True):
-            # Aquí definimos quién puede entrar (Podemos hacerlo más complejo después)
-            if usuario_ingresado.lower() == "nutribere" and password_ingresada == st.secrets["PASSWORD_ACCESO"]:
+        if st.button("ACCEDER", use_container_width=True):
+            if usuario.lower() == "nutribere" and password == st.secrets["PASSWORD_ACCESO"]:
                 st.session_state["password_correct"] = True
                 st.rerun()
-            elif usuario_ingresado == "":
-                st.warning("Por favor ingresa un nombre de usuario.")
             else:
-                st.error("🔒 Usuario o contraseña incorrectos.")
+                st.error("Credenciales incorrectas")
+        
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        # FOOTER
-        st.write("")
-        st.write("")
-        st.markdown("""
-            <div style='border-top: 1px solid #F3F4F6; padding-top: 20px; margin-top: 20px;'>
-                <p style='font-size: 11px; color: #D1D5DB !important;'>© 2026 Nutribere Studio.</p>
-            </div>
-        """, unsafe_allow_html=True)
-
-    # --- COLUMNA DE IMAGEN (LA QUE SE AJUSTA SOLA) ---
     with col_img:
-        st.image(IMG_URL, use_container_width=True)
+        st.markdown('<div class="image-side"></div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
     return False
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
@@ -554,6 +541,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
