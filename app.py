@@ -324,7 +324,7 @@ def check_password():
         return True
 
     # --- 🎛️ VARIABLES DE DISEÑO ---
-    IMG_URL = "login_hero.png" # Tu imagen generada
+    IMG_URL = "login_hero.webp" # Tu imagen generada
     COLOR_BOTON = "#0C5A5D"
 
     # --- 📱 CSS RESPONSIVO AVANZADO ---
@@ -541,6 +541,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
