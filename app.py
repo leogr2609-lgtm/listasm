@@ -317,143 +317,151 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
 
 # --- 6. INTERFAZ PRINCIPAL ---
 import streamlit as st
-import base64
-
-def get_base64_image(image_path: str) -> str:
-    try:
-        with open(image_path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
-    except:
-        return ""
-
 def check_password():
+    """Retorna True si el usuario ingresó la contraseña correcta."""
+    
     if st.session_state.get("password_correct", False):
         return True
 
-    img_b64 = get_base64_image("login_hero.webp")
+    # --- 🎛️ PANEL DE CONTROL DE DISEÑO ---
+    
+    # 1. PROPORCIONES
+    ANCHO_ESPACIO_IZQ = 0.8
+    ANCHO_FORMULARIO = 1.4
+    ANCHO_SEPARADOR = 0.4
+    ANCHO_IMAGEN = 3.2
+    
+    # 2. CONTENIDO
+    TXT_TITULO = "Portal de Especialista"
+    TXT_DESC = "Automatiza la logística de tus planes nutricionales. Convierte dietas en listas de compra exactas en segundos."
+    IMG_URL = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
 
+    # 3. COLORES
+    COLOR_FONDO = "#FFFFFF"
+    COLOR_TEXTO = "#111827"   # Negro suave
+    COLOR_BOTON = "#0C5A5D"   # Tu Verde Teal
+    
+    # -----------------------------------------------------------
+
+    # --- CSS ---
     st.markdown(f"""
     <style>
-      header, footer {{ visibility: hidden; }}
-      [data-testid="stSidebar"] {{ display: none; }}
-
-      [data-testid="stAppViewContainer"] {{ background: #ffffff !important; }}
-      .block-container {{ padding: 0 !important; max-width: 100% !important; }}
-
-      /* Centrado vertical del panel izquierdo */
-      .nb-left-wrap {{
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 24px;
-      }}
-
-      /* “Tarjeta” aplicada al contenedor real de Streamlit usando :has() */
-      .nb-card-host:has(.nb-card-anchor) {{
-        width: 100%;
-        max-width: 520px;
-        border: 1px solid #E5E7EB;
-        border-radius: 16px;
-        padding: 32px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-        background: #ffffff;
-      }}
-
-      .nb-brand {{
-        font-family: -apple-system, system-ui, sans-serif !important;
-        color: #0C5A5D !important;
-        font-weight: 900;
-        margin: 0 0 8px 0;
-      }}
-      .nb-title {{
-        font-family: -apple-system, system-ui, sans-serif !important;
-        color: #111827 !important;
-        font-size: 34px;
-        font-weight: 900;
-        margin: 0 0 8px 0;
-      }}
-      .nb-sub {{
-        font-family: -apple-system, system-ui, sans-serif !important;
-        color: #6B7280 !important;
-        font-size: 15px;
-        margin: 0 0 18px 0;
-        line-height: 1.4;
-      }}
-      .nb-label {{
-        font-family: -apple-system, system-ui, sans-serif !important;
-        color: #111827 !important;
-        font-size: 12px;
-        font-weight: 800;
-        letter-spacing: 0.6px;
-        margin: 14px 0 6px 0;
-      }}
-
-      div[data-baseweb="input"] {{
-        background: #ffffff !important;
+    [data-testid="stAppViewContainer"] {{
+        background-color: {COLOR_FONDO} !important;
+    }}
+    * {{
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        letter-spacing: -0.2px;
+    }}
+    
+    /* Reglas generales de respaldo */
+    h1, h2, h3, p, label, a {{
+        color: {COLOR_TEXTO} !important;
+        text-shadow: none !important;
+    }}
+    
+    div[data-baseweb="input"] {{
+        background-color: #FFFFFF !important;
         border: 1px solid #E5E7EB !important;
-        border-radius: 10px !important;
-      }}
-
-      div[data-testid="stButton"] button {{
+        border-radius: 8px !important;
+        padding: 8px !important;
+    }}
+    input {{
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        font-weight: 500 !important;
+    }}
+    
+    div[data-testid="stButton"] button {{
         width: 100%;
-        background-color: #0C5A5D !important;
-        color: white !important;
-        padding: 12px 14px !important;
-        border-radius: 10px !important;
-        font-weight: 900 !important;
-        border: none !important;
-        margin-top: 8px !important;
-      }}
+        background-color: {COLOR_BOTON} !important;
+        color: #FFFFFF !important;
+        border: none;
+        padding: 14px !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+        font-size: 15px !important;
+        margin-top: 15px;
+        box-shadow: 0 4px 6px rgba(12, 90, 93, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }}
+    div[data-testid="stButton"] button:hover {{
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(12, 90, 93, 0.2);
+    }}
 
-      /* Panel derecho imagen con borde y padding */
-      .nb-hero {{
-        height: 100vh;
-        padding: 24px;
-      }}
-      .nb-hero-inner {{
-        height: 100%;
-        width: 100%;
-        border-radius: 18px;
-        background-image: url("data:image/webp;base64,{img_b64}");
-        background-size: cover;
-        background-position: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.10);
-      }}
-
-      @media (max-width: 980px) {{
-        .nb-hero {{ display:none; }}
-        .nb-left-wrap {{ height: auto; min-height: 100vh; }}
-      }}
+    div[data-testid="column"]:last-child {{
+        padding: 0px !important;
+    }}
+    .block-container {{
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+        padding-right: 0rem !important;
+        max-width: 100% !important;
+    }}
+    header, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-    left, right = st.columns([1.05, 1.2], gap="large")
+    col_izq, col_form, col_sep, col_img = st.columns(
+        [ANCHO_ESPACIO_IZQ, ANCHO_FORMULARIO, ANCHO_SEPARADOR, ANCHO_IMAGEN], 
+        gap="small"
+    )
 
-    with left:
-        st.markdown('<div class="nb-left-wrap">', unsafe_allow_html=True)
+    with col_form:
+        st.write("") 
+        st.write("") 
+        st.write("") 
+        st.write("")
+        st.write("")
+        
+        # 1. HEADER
+        st.markdown("<h3 style='font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #0C5A5D !important;'>🍏 nutribere studio</h3>", unsafe_allow_html=True)
+        
+        # --- AQUÍ ESTABA EL ERROR: AGREGUÉ color: {COLOR_TEXTO} !important; ---
+        st.markdown(f"<h1 style='font-size: 38px; font-weight: 800; line-height: 1.1; margin-bottom: 10px; color: {COLOR_TEXTO} !important;'>{TXT_TITULO}</h1>", unsafe_allow_html=True)
+        
+        st.markdown(f"<p style='font-size: 16px; font-weight: 400; color: #6B7280 !important; line-height: 1.5; margin-bottom: 35px;'>{TXT_DESC}</p>", unsafe_allow_html=True)
 
-        # Host (contenedor real de Streamlit) donde cae la tarjeta por CSS
-        with st.container():
-            st.markdown('<div class="nb-card-anchor"></div>', unsafe_allow_html=True)
-            st.markdown("<div class='nb-brand'>🍏 nutribere studio</div>", unsafe_allow_html=True)
-            st.markdown("<div class='nb-title'>Iniciar sesión</div>", unsafe_allow_html=True)
-            st.markdown("<div class='nb-sub'>Automatiza la logística de tus planes nutricionales.</div>", unsafe_allow_html=True)
+        # 2. INPUTS
+        st.markdown("<label style='font-size: 13px; font-weight: 600; color: #374151 !important;'>USUARIO</label>", unsafe_allow_html=True)
+        usuario = st.text_input("Usuario", key="user_input", label_visibility="collapsed", placeholder="ej. berenice_admin")
+        
+        st.write("")
+        
+        st.markdown("<label style='font-size: 13px; font-weight: 600; color: #374151 !important;'>CONTRASEÑA DE ACCESO</label>", unsafe_allow_html=True)
+        password = st.text_input("Contraseña", type="password", key="password_input", label_visibility="collapsed", placeholder="••••••••")
+        
+        # 3. BOTÓN
+        if st.button("INGRESAR AL SISTEMA", use_container_width=True):
+            if password == st.secrets["PASSWORD_ACCESO"]:
+                st.session_state["password_correct"] = True
+                st.rerun()
+            else:
+                st.error("🔒 Credenciales incorrectas")
 
-            with st.form("login_form", clear_on_submit=False):
-                st.markdown("<div class='nb-label'>USUARIO</div>", unsafe_allow_html=True)
-                usuario = st.text_input("Usuario", label_visibility="collapsed", placeholder="ej. nutri_bere", key="user_input")
+        # 4. FOOTER
+        st.write("")
+        st.write("")
+        st.markdown("""
+            <div style='border-top: 1px solid #F3F4F6; padding-top: 20px; margin-top: 20px;'>
+                <div style='display: flex; gap: 15px; font-size: 12px; color: #9CA3AF;'>
+                    <a href='#' style='text-decoration: none; color: #6B7280 !important;'>Privacidad</a>
+                    <span style='color: #E5E7EB;'>|</span>
+                    <a href='#' style='text-decoration: none; color: #6B7280 !important;'>Términos</a>
+                    <span style='color: #E5E7EB;'>|</span>
+                    <a href='#' style='text-decoration: none; color: #6B7280 !important;'>Soporte Técnico</a>
+                </div>
+                <p style='font-size: 11px; color: #D1D5DB !important; margin-top: 10px;'>
+                    © 2026 Nutribere Studio. Versión Comercial v1.0
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
 
-                st.markdown("<div class='nb-label'>CONTRASEÑA</div>", unsafe_allow_html=True)
-                password = st.text_input(
-    "Contraseña",
-    type="password",
-    label_visibility="collapsed",
-    placeholder="••••••••",
-    key="password_input"
-)
+    with col_img:
+        st.image(IMG_URL, use_container_width=True)
 
-
+    return False
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
 def limpiar_memoria():
     """Esta función se activa SOLA cuando cambias el archivo PDF."""
@@ -557,36 +565,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
