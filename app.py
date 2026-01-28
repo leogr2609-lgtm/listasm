@@ -316,35 +316,33 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
     return pdf.output(dest='S').encode('latin-1')
 
 # --- 6. INTERFAZ PRINCIPAL ---
+
 def check_password():
     """Retorna True si el usuario ingresó la contraseña correcta."""
-    
-    # Validamos si la contraseña ya es correcta en la sesión
     if st.session_state.get("password_correct", False):
         return True
 
-    # Si no, mostramos el input para escribirla
-    st.text_input(
-        "🔐 Contraseña de Acceso", 
-        type="password", 
-        key="password_input"
-    )
+    st.text_input("🔐 Contraseña de Acceso", type="password", key="password_input")
 
-    # Verificamos cuando el usuario escribe algo
     if "password_input" in st.session_state:
         password = st.session_state["password_input"]
         if password == st.secrets["PASSWORD_ACCESO"]:
             st.session_state["password_correct"] = True
-            st.rerun()  # Recarga la página para mostrar la app
+            st.rerun()
         elif password:
             st.error("❌ Contraseña incorrecta")
-
     return False
+
+# --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
+def limpiar_memoria():
+    """Esta función se activa SOLA cuando cambias el archivo PDF."""
+    if 'datos_ia' in st.session_state:
+        del st.session_state['datos_ia']
 
 def main():
     # --- 1. BLOQUEO DE SEGURIDAD ---
     if not check_password():
-        st.stop()  # Se detiene aquí si no hay password correcto
+        st.stop()
     
     # --- 2. DISEÑO DE CABECERA ---
     st.markdown("<div style='text-align: center; margin-bottom: 30px;'>", unsafe_allow_html=True)
@@ -361,38 +359,35 @@ def main():
             nombre_paciente = st.text_input("1. Nombre del Paciente", placeholder="Ej: Leo Garcia")
         
         with col2:
-            archivo_pdf = st.file_uploader("2. Sube el Plan (PDF)", type="pdf")
-
-    # --- 4. DETECTOR DE CAMBIO DE ARCHIVO (ESTO CORRIGE EL ERROR) ---
-    if archivo_pdf:
-        # Si el nombre del PDF actual NO es igual al que procesamos antes...
-        if st.session_state.get("ultimo_archivo_nombre") != archivo_pdf.name:
-            # Limpiamos la memoria de la IA para que analice el nuevo plan
-            if 'datos_ia' in st.session_state:
-                del st.session_state.datos_ia
-            # Guardamos el nombre de este nuevo archivo para la siguiente comparación
-            st.session_state.ultimo_archivo_nombre = archivo_pdf.name
+            # AQUÍ ESTÁ EL TRUCO: on_change=limpiar_memoria
+            # Esto garantiza que al cambiar el archivo, se borren los datos viejos.
+            archivo_pdf = st.file_uploader(
+                "2. Sube el Plan (PDF)", 
+                type="pdf", 
+                on_change=limpiar_memoria 
+            )
 
     st.write("") 
 
-    # --- 5. LÓGICA DE PROCESAMIENTO E IA ---
+    # --- 4. LÓGICA DE PROCESAMIENTO E IA ---
     datos_para_pdf = {}
     
     if archivo_pdf and nombre_paciente:
         
-        # Solo llama a la IA si no hay datos guardados (o si los borramos arriba)
+        # Solo llama a la IA si no hay datos guardados
         if 'datos_ia' not in st.session_state:
-            with st.spinner("🧠 Analizando el menú..."):
+            with st.spinner("🧠 Analizando el nuevo menú..."):
                 st.session_state.datos_ia = procesar_con_ia(archivo_pdf)
         
-        # --- 6. REVISIÓN Y EDICIÓN ---
-        if st.session_state.datos_ia:
+        # --- 5. REVISIÓN Y EDICIÓN ---
+        if st.session_state.get("datos_ia"):
             with st.container():
                 st.markdown(f"<h3 style='border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 20px;'>📋 Revisión: {nombre_paciente}</h3>", unsafe_allow_html=True)
                 
                 orden = ["Verduras", "Frutas", "Proteínas", "Grasas y Lácteos", "Cereales y Tubérculos", "Extras y Despensa"]
                 data_ia = st.session_state.datos_ia
                 
+                # Asegurar categorías
                 for cat in orden:
                     if cat not in data_ia: data_ia[cat] = []
 
@@ -411,7 +406,7 @@ def main():
 
                 st.write("")
                 
-                # --- 7. BOTÓN DE IMPRESIÓN ---
+                # --- 6. BOTÓN DE IMPRESIÓN ---
                 col1, col2, col3 = st.columns([1, 2, 1])
                 with col2:
                     if st.button("✨ IMPRIMIR LISTA OFICIAL"):
