@@ -340,7 +340,7 @@ def check_password():
     COLOR_FONDO = "#FFFFFF"   # Blanco
     COLOR_TEXTO_NEGRO = "#000000" # Negro Puro (Para forzar visibilidad)
     COLOR_BOTON = "#0C5A5D"   # Tu Verde Teal
-    IMG_URL = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
+    IMG_URL = "hero.webp"
 
     # -----------------------------------------------------------
 
@@ -555,6 +555,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
