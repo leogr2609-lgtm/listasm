@@ -317,71 +317,74 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
 
 # --- 6. INTERFAZ PRINCIPAL ---
 import streamlit as st
+import base64
+
+def get_base64_image(image_path):
+    """Convierte la imagen local a base64 para que el CSS pueda leerla."""
+    try:
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    except:
+        return ""
+
 def check_password():
     """Retorna True si el usuario ingresó la contraseña correcta."""
     
     if st.session_state.get("password_correct", False):
         return True
 
-    # --- 🎛️ VARIABLES DE DISEÑO ---
-    IMG_URL = "login_hero.webp" # Tu imagen generada
-    COLOR_BOTON = "#0C5A5D"
+    # --- 1. PREPARAR IMAGEN ---
+    img_base64 = get_base64_image("login_hero.webp")
+    # Si la imagen existe, creamos el enlace base64, si no, usamos un color sólido
+    bg_style = f"background-image: url('data:image/webp;base64,{img_base64}');" if img_base64 else "background-color: #0C5A5D;"
 
-    # --- 📱 CSS RESPONSIVO AVANZADO ---
+    # --- 2. CSS PROFESIONAL Y RESPONSIVO ---
     st.markdown(f"""
     <style>
-    /* 1. RESET TOTAL */
-    [data-testid="stAppViewContainer"] {{
-        background-color: white !important;
-    }}
-    header, footer {{visibility: hidden;}}
+    /* RESET DE STREAMLIT */
+    [data-testid="stAppViewContainer"] {{ background-color: white !important; overflow: hidden; }}
     .block-container {{ padding: 0 !important; max-width: 100% !important; }}
+    header, footer {{ visibility: hidden; }}
 
-    /* 2. FORZAR TEXTOS NEGROS (Para evitar el modo oscuro) */
-    h1, h2, h3, p, label, span, div {{
-        color: black !important;
-        -webkit-text-fill-color: black !important;
-        text-shadow: none !important;
-        font-family: -apple-system, sans-serif !important;
+    /* CONTENEDOR PRINCIPAL FLEX */
+    .main-login-wrapper {{
+        display: flex;
+        width: 100vw;
+        height: 100vh;
     }}
 
-    /* 3. LÓGICA RESPONSIVA (MEDIA QUERIES) */
-    
-    /* EN PANTALLAS GRANDES (PC/Laptop) */
-    @media (min-width: 1024px) {{
-        .login-container {{
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }}
-        .form-side {{
-            width: 40%;
-            padding: 5% 8%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Centrado vertical real */
-        }}
-        .image-side {{
-            width: 60%;
-            height: 100vh;
-            background-image: url("{IMG_URL}");
-            background-size: cover;
-            background-position: center;
-        }}
+    /* LADO IZQUIERDO: FORMULARIO */
+    .login-form-side {{
+        width: 40%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 5%;
+        background-color: white;
+        z-index: 2;
     }}
 
-    /* EN PANTALLAS PEQUEÑAS (Móvil) */
-    @media (max-width: 1023px) {{
-        .image-side {{ display: none; }} /* Ocultamos la imagen para que no estorbe */
-        .form-side {{
-            width: 100%;
-            padding: 40px 20px;
-        }}
+    /* LADO DERECHO: IMAGEN (FULL BLEED) */
+    .login-image-side {{
+        width: 60%;
+        height: 100%;
+        {bg_style}
+        background-size: cover;
+        background-position: center right;
+        background-repeat: no-repeat;
     }}
 
-    /* 4. ESTILO DE COMPONENTES */
+    /* TEXTOS FORZADOS A NEGRO */
+    h1, h2, h3, p, label, span {{
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        font-family: -apple-system, system-ui, sans-serif !important;
+    }}
+
+    /* ESTILO DE INPUTS Y BOTÓN */
     div[data-baseweb="input"] {{
-        background-color: #FFFFFF !important;
+        background-color: white !important;
         border: 1px solid #E5E7EB !important;
         border-radius: 8px !important;
     }}
@@ -389,51 +392,68 @@ def check_password():
     
     div[data-testid="stButton"] button {{
         width: 100%;
-        background-color: {COLOR_BOTON} !important;
+        background-color: #0C5A5D !important;
         color: white !important;
         -webkit-text-fill-color: white !important;
-        border-radius: 8px !important;
         padding: 12px !important;
+        border-radius: 8px !important;
         font-weight: 600 !important;
+        border: none !important;
+    }}
+
+    /* MEDIA QUERY PARA MÓVILES */
+    @media (max-width: 1024px) {{
+        .login-image-side {{ display: none; }}
+        .login-form-side {{ width: 100%; padding: 0 10%; }}
     }}
     </style>
     """, unsafe_allow_html=True)
 
-    # --- ESTRUCTURA HTML (Para control total del layout) ---
-    # Usamos st.container pero inyectamos divs para que el CSS funcione
-    st.markdown('<div class="login-container">', unsafe_allow_html=True)
+    # --- 3. ESTRUCTURA HTML ---
+    # Usamos este bloque único para evitar que las columnas de Streamlit rompan el diseño
+    st.markdown('<div class="main-login-wrapper">', unsafe_allow_html=True)
     
-    col_form, col_img = st.columns([1, 1.5], gap="small")
+    # Dividimos la pantalla manualmente con el CSS de arriba
+    col_left, col_right = st.columns([1, 1.5], gap="small")
 
-    with col_form:
-        st.markdown('<div class="form-side">', unsafe_allow_html=True)
+    with col_left:
+        st.markdown('<div class="login-form-side">', unsafe_allow_html=True)
         
+        # CONTENIDO DEL LOGIN
         st.markdown("<h3 style='color: #0C5A5D !important; -webkit-text-fill-color: #0C5A5D !important;'>🍏 nutribere studio</h3>", unsafe_allow_html=True)
-        st.markdown("<h1 style='margin-top: 10px; font-size: 32px;'>Iniciar Sesión</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #6B7280 !important;'>Ingresa tus credenciales para acceder.</p>", unsafe_allow_html=True)
+        st.markdown("<h1 style='font-size: 36px; font-weight: 800; margin-top: 10px;'>Iniciar Sesión</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #6B7280 !important; -webkit-text-fill-color: #6B7280 !important;'>Ingresa tus credenciales para gestionar el sistema.</p>", unsafe_allow_html=True)
         
         st.write("")
         
-        # Inputs
+        # Campo Usuario
         st.markdown("<label style='font-size: 13px; font-weight: 600;'>USUARIO</label>", unsafe_allow_html=True)
         usuario = st.text_input("User", key="user_input", label_visibility="collapsed", placeholder="ej. nutri_bere")
         
         st.write("")
         
+        # Campo Contraseña
         st.markdown("<label style='font-size: 13px; font-weight: 600;'>CONTRASEÑA</label>", unsafe_allow_html=True)
         password = st.text_input("Pass", type="password", key="password_input", label_visibility="collapsed", placeholder="••••••••")
         
-        if st.button("ACCEDER", use_container_width=True):
+        st.write("")
+        
+        # Botón de acceso
+        if st.button("ACCEDER AL SISTEMA"):
             if usuario.lower() == "nutribere" and password == st.secrets["PASSWORD_ACCESO"]:
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
-                st.error("Credenciales incorrectas")
+                st.error("🔒 Usuario o contraseña incorrectos.")
         
-        st.markdown("</div>", unsafe_allow_html=True)
+        # Footer
+        st.markdown("<p style='font-size: 11px; color: #9CA3AF !important; margin-top: 50px;'>© 2026 Nutribere Studio. Secure Access.</p>", unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    with col_img:
-        st.markdown('<div class="image-side"></div>', unsafe_allow_html=True)
+    with col_right:
+        # La imagen se carga por CSS como fondo para asegurar que sea responsiva
+        st.markdown('<div class="login-image-side"></div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -541,6 +561,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
