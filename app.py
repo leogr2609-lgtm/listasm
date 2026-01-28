@@ -323,82 +323,107 @@ def check_password():
     if st.session_state.get("password_correct", False):
         return True
 
-    # --- CSS MÍNIMO (Aprovechando tu config.toml) ---
+    # --- CSS AGRESIVO (ESTILO HEVY/SAAS) ---
     st.markdown("""
     <style>
-    /* Ocultamos header y footer para limpieza visual */
+    /* 1. FONDO BLANCO TOTAL (Aplastamos el config.toml) */
+    [data-testid="stAppViewContainer"] {
+        background-color: #FFFFFF !important;
+    }
+    
+    /* 2. TEXTOS (Forzamos oscuro porque el fondo es blanco) */
+    h1, h2, h3, p, span, div, label {
+        color: #1F2937 !important; /* Gris casi negro profesional */
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+    
+    /* 3. INPUTS (Estilo Hevy: Borde fino, fondo blanco) */
+    div[data-baseweb="input"] {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E5E7EB !important; /* Gris muy suave */
+        border-radius: 8px !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    input {
+        color: #111827 !important; /* Texto negro al escribir */
+    }
+
+    /* 4. EL BOTÓN (ADIÓS AMARILLO - HOLA PROFESIONAL) */
+    /* Lo hacemos Gris Oscuro / Teal Profundo para que se vea serio */
+    div[data-testid="stButton"] button {
+        width: 100%;
+        background-color: #111827 !important; /* Casi negro (Estilo Apple/Hevy) */
+        color: #FFFFFF !important;
+        border: none;
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+        font-size: 16px !important;
+        transition: all 0.2s;
+    }
+    div[data-testid="stButton"] button:hover {
+        background-color: #000000 !important; /* Negro total al pasar mouse */
+        transform: scale(1.01);
+    }
+
+    /* 5. ARREGLAR LA IMAGEN DE LA DERECHA */
+    /* Quitamos el padding de la columna derecha para que la imagen pegue al borde */
+    div[data-testid="column"]:nth-of-type(2) {
+        padding-top: 0px;
+    }
+    
+    /* Ocultar header/footer */
     header {visibility: hidden;}
     footer {visibility: hidden;}
-    
-    /* Quitamos el padding excesivo de arriba para que llegue al borde */
-    .block-container {
-        padding-top: 2rem !important;
-        padding-bottom: 0rem !important;
-        padding-left: 5rem !important;
-        padding-right: 0rem !important;
-    }
-    
-    /* Estilo limpio para los inputs */
-    div[data-baseweb="input"] {
-        border-radius: 8px !important;
-        background-color: #FFFFFF !important;
-        border: 1px solid #E5E7EB !important;
-    }
-    
-    /* Ajuste de la columna derecha (Imagen) para que no tenga márgenes blancos */
-    [data-testid="column"]:nth-of-type(2) {
-        background-color: #0C5A5D; /* Tu color primario */
-        padding: 0 !important;
-    }
     </style>
     """, unsafe_allow_html=True)
 
-    # --- ESTRUCTURA DE PANTALLA COMPLETA ---
-    # Usamos columnas: 
-    # Columna 1 (Login): 35% del ancho
-    # Columna 2 (Imagen): 65% del ancho (El espacio vacío visual)
-    col_login, col_imagen = st.columns([1, 1.5], gap="large")
+    # --- LAYOUT (Izquierda: Login | Derecha: Visual) ---
+    col_login, col_imagen = st.columns([1, 1.3], gap="large")
 
-    # --- IZQUIERDA: FORMULARIO ---
+    # --- IZQUIERDA: EL LOGIN ---
     with col_login:
         st.write("") 
         st.write("") 
-        st.write("") 
-        st.write("") # Espacio para bajarlo un poco visualmente
+        st.write("") # Espaciado superior
         
-        # Logo y Títulos
-        st.markdown("<h3 style='color: #0C5A5D; margin: 0;'>🍏 nutribere</h3>", unsafe_allow_html=True)
-        st.markdown("<h1 style='font-size: 48px; font-weight: 800; letter-spacing: -1px; margin-top: 10px; line-height: 1.1;'>Bienvenida<br>al sistema.</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #6B7280; font-size: 18px; margin-top: 10px; margin-bottom: 40px;'>Gestiona la logística alimentaria de tus pacientes en segundos.</p>", unsafe_allow_html=True)
+        # Logo minimalista
+        st.markdown("<h3 style='color: #0C5A5D !important; margin: 0; font-size: 20px;'>🍏 nutribere</h3>", unsafe_allow_html=True)
+        
+        # Título Grande y Limpio
+        st.markdown("<h1 style='font-size: 40px; font-weight: 800; margin-top: 15px; margin-bottom: 10px; letter-spacing: -1px;'>Iniciar Sesión</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #6B7280 !important; font-size: 16px; margin-bottom: 40px;'>Bienvenida de nuevo al sistema de logística.</p>", unsafe_allow_html=True)
 
-        # Formulario
+        # Input
+        st.markdown("<label style='font-weight: 500; font-size: 14px; margin-bottom: 5px; display:block;'>Contraseña</label>", unsafe_allow_html=True)
         password = st.text_input(
             "Contraseña", 
             type="password", 
             key="password_input",
             label_visibility="collapsed",
-            placeholder="Introduce tu clave de acceso"
+            placeholder="Introduce tu clave..."
         )
         
         st.write("")
         
-        # Botón (Tu config.toml ya le dará el color #0C5A5D automáticamente)
-        if st.button("INGRESAR AHORA", use_container_width=True, type="primary"):
+        # Botón
+        if st.button("INGRESAR", use_container_width=True):
             if password == st.secrets["PASSWORD_ACCESO"]:
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
                 st.error("🔒 Contraseña incorrecta")
         
-        # Footer sutil
-        st.markdown("<p style='font-size: 12px; color: #9CA3AF; margin-top: 50px;'>© 2024 Nutribere Studio. Secure Access.</p>", unsafe_allow_html=True)
+        # Footer pequeño
+        st.markdown("<div style='margin-top: 30px; text-align: center;'><p style='color: #9CA3AF !important; font-size: 12px;'>Protected by Nutribere Secure Access © 2026</p></div>", unsafe_allow_html=True)
 
-    # --- DERECHA: IMAGEN HERO ---
+    # --- DERECHA: LA IMAGEN (CLAVE PARA QUE NO SE VEA AZUL PLANO) ---
     with col_imagen:
-        # Esta es una imagen vertical de alta calidad de Unsplash (Comida saludable / Estilo Clean)
-        # Ocupará todo el lado derecho
+        # He seleccionado una imagen VERTICAL de estilo "Clean Tech/Medical"
+        # Esto cubrirá el lado derecho y quitará la sensación de "vacío azul".
         st.image(
-            "https://images.unsplash.com/photo-1543362906-ac1b4f87e9c9?q=80&w=2070&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop",
             use_container_width=True
         )
 
@@ -506,6 +531,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
