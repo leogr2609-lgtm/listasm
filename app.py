@@ -323,43 +323,45 @@ def check_password():
     if st.session_state.get("password_correct", False):
         return True
 
-    # --- 🎛️ PANEL DE CONTROL DE DISEÑO ---
+    # --- 🎛️ PANEL DE CONTROL (EDITA AQUÍ TUS TEXTOS Y COLORES) ---
     
-    # 1. PROPORCIONES
+    # 1. TEXTOS (Edítalos aquí para que no salgan los que no quieres)
+    TXT_MARCA = "🍏 nutribere studio"
+    TXT_TITULO = "Portal de Especialista"
+    TXT_DESC = "Automatiza la logística de tus planes nutricionales."
+    
+    # 2. PROPORCIONES
     ANCHO_ESPACIO_IZQ = 0.8
     ANCHO_FORMULARIO = 1.4
     ANCHO_SEPARADOR = 0.4
     ANCHO_IMAGEN = 3.2
     
-    # 2. CONTENIDO
-    TXT_TITULO = "Portal de Especialista"
-    TXT_DESC = "Automatiza la logística de tus planes nutricionales. Convierte dietas en listas de compra exactas en segundos."
+    # 3. COLORES
+    COLOR_FONDO = "#FFFFFF"   # Blanco
+    COLOR_TEXTO_NEGRO = "#000000" # Negro Puro (Para forzar visibilidad)
+    COLOR_BOTON = "#0C5A5D"   # Tu Verde Teal
     IMG_URL = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
 
-    # 3. COLORES
-    COLOR_FONDO = "#FFFFFF"
-    COLOR_TEXTO = "#111827"   # Negro suave
-    COLOR_BOTON = "#0C5A5D"   # Tu Verde Teal
-    
     # -----------------------------------------------------------
 
-    # --- CSS ---
+    # --- CSS "NUCLEAR" PARA FORZAR EL COLOR NEGRO ---
     st.markdown(f"""
     <style>
+    /* 1. FONDO BLANCO */
     [data-testid="stAppViewContainer"] {{
         background-color: {COLOR_FONDO} !important;
     }}
-    * {{
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-        letter-spacing: -0.2px;
-    }}
     
-    /* Reglas generales de respaldo */
-    h1, h2, h3, p, label, a {{
-        color: {COLOR_TEXTO} !important;
+    /* 2. FORZADO DE TEXTO (CANDADO DE SEGURIDAD) */
+    /* Esto obliga al navegador a pintar el texto de negro SI o SI */
+    h1, h2, h3, p, label, span, div {{
+        color: {COLOR_TEXTO_NEGRO} !important;
+        -webkit-text-fill-color: {COLOR_TEXTO_NEGRO} !important; /* Truco para modo oscuro */
         text-shadow: none !important;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
     }}
     
+    /* 3. INPUTS */
     div[data-baseweb="input"] {{
         background-color: #FFFFFF !important;
         border: 1px solid #E5E7EB !important;
@@ -367,47 +369,42 @@ def check_password():
         padding: 8px !important;
     }}
     input {{
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
-        font-weight: 500 !important;
+        color: black !important;
+        -webkit-text-fill-color: black !important;
     }}
     
+    /* 4. BOTÓN */
     div[data-testid="stButton"] button {{
         width: 100%;
         background-color: {COLOR_BOTON} !important;
         color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important; /* El texto del botón sí debe ser blanco */
         border: none;
         padding: 14px !important;
         font-weight: 600 !important;
         border-radius: 8px !important;
-        font-size: 15px !important;
         margin-top: 15px;
-        box-shadow: 0 4px 6px rgba(12, 90, 93, 0.1);
-        transition: transform 0.2s, box-shadow 0.2s;
     }}
-    div[data-testid="stButton"] button:hover {{
-        transform: translateY(-1px);
-        box-shadow: 0 6px 12px rgba(12, 90, 93, 0.2);
-    }}
-
+    
+    /* 5. ARREGLO DE IMAGEN (Full Bleed) */
     div[data-testid="column"]:last-child {{
         padding: 0px !important;
     }}
     .block-container {{
-        padding-top: 0rem !important;
-        padding-bottom: 0rem !important;
-        padding-right: 0rem !important;
+        padding: 0rem !important;
         max-width: 100% !important;
     }}
     header, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
+    # --- LAYOUT ---
     col_izq, col_form, col_sep, col_img = st.columns(
         [ANCHO_ESPACIO_IZQ, ANCHO_FORMULARIO, ANCHO_SEPARADOR, ANCHO_IMAGEN], 
         gap="small"
     )
 
+    # --- FORMULARIO ---
     with col_form:
         st.write("") 
         st.write("") 
@@ -415,24 +412,24 @@ def check_password():
         st.write("")
         st.write("")
         
-        # 1. HEADER
-        st.markdown("<h3 style='font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #0C5A5D !important;'>🍏 nutribere studio</h3>", unsafe_allow_html=True)
+        # TÍTULOS CON ESTILO INLINE (DOBLE SEGURIDAD)
+        # Aquí también le pongo color: black !important directo en la etiqueta
+        st.markdown(f"<h3 style='color: #0C5A5D !important; -webkit-text-fill-color: #0C5A5D !important; font-size: 18px; font-weight: 600; margin-bottom: 15px;'>{TXT_MARCA}</h3>", unsafe_allow_html=True)
         
-        # --- AQUÍ ESTABA EL ERROR: AGREGUÉ color: {COLOR_TEXTO} !important; ---
-        st.markdown(f"<h1 style='font-size: 38px; font-weight: 800; line-height: 1.1; margin-bottom: 10px; color: {COLOR_TEXTO} !important;'>{TXT_TITULO}</h1>", unsafe_allow_html=True)
+        st.markdown(f"<h1 style='color: black !important; -webkit-text-fill-color: black !important; font-size: 38px; font-weight: 800; line-height: 1.1; margin-bottom: 10px;'>{TXT_TITULO}</h1>", unsafe_allow_html=True)
         
-        st.markdown(f"<p style='font-size: 16px; font-weight: 400; color: #6B7280 !important; line-height: 1.5; margin-bottom: 35px;'>{TXT_DESC}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: #6B7280 !important; -webkit-text-fill-color: #6B7280 !important; font-size: 16px; margin-bottom: 35px;'>{TXT_DESC}</p>", unsafe_allow_html=True)
 
-        # 2. INPUTS
-        st.markdown("<label style='font-size: 13px; font-weight: 600; color: #374151 !important;'>USUARIO</label>", unsafe_allow_html=True)
+        # INPUTS
+        st.markdown("<label style='font-size: 13px; font-weight: 600; color: #374151 !important; -webkit-text-fill-color: #374151 !important;'>USUARIO</label>", unsafe_allow_html=True)
         usuario = st.text_input("Usuario", key="user_input", label_visibility="collapsed", placeholder="ej. berenice_admin")
         
         st.write("")
         
-        st.markdown("<label style='font-size: 13px; font-weight: 600; color: #374151 !important;'>CONTRASEÑA DE ACCESO</label>", unsafe_allow_html=True)
+        st.markdown("<label style='font-size: 13px; font-weight: 600; color: #374151 !important; -webkit-text-fill-color: #374151 !important;'>CONTRASEÑA</label>", unsafe_allow_html=True)
         password = st.text_input("Contraseña", type="password", key="password_input", label_visibility="collapsed", placeholder="••••••••")
         
-        # 3. BOTÓN
+        # BOTÓN
         if st.button("INGRESAR AL SISTEMA", use_container_width=True):
             if password == st.secrets["PASSWORD_ACCESO"]:
                 st.session_state["password_correct"] = True
@@ -440,20 +437,13 @@ def check_password():
             else:
                 st.error("🔒 Credenciales incorrectas")
 
-        # 4. FOOTER
+        # FOOTER
         st.write("")
         st.write("")
         st.markdown("""
             <div style='border-top: 1px solid #F3F4F6; padding-top: 20px; margin-top: 20px;'>
-                <div style='display: flex; gap: 15px; font-size: 12px; color: #9CA3AF;'>
-                    <a href='#' style='text-decoration: none; color: #6B7280 !important;'>Privacidad</a>
-                    <span style='color: #E5E7EB;'>|</span>
-                    <a href='#' style='text-decoration: none; color: #6B7280 !important;'>Términos</a>
-                    <span style='color: #E5E7EB;'>|</span>
-                    <a href='#' style='text-decoration: none; color: #6B7280 !important;'>Soporte Técnico</a>
-                </div>
-                <p style='font-size: 11px; color: #D1D5DB !important; margin-top: 10px;'>
-                    © 2026 Nutribere Studio. Versión Comercial v1.0
+                <p style='font-size: 11px; color: #D1D5DB !important; -webkit-text-fill-color: #D1D5DB !important;'>
+                    © 2026 Nutribere Studio.
                 </p>
             </div>
         """, unsafe_allow_html=True)
@@ -565,6 +555,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
