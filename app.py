@@ -318,18 +318,131 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
 # --- 6. INTERFAZ PRINCIPAL ---
 import streamlit as st
 
+
 def check_password():
+    """Retorna True si el usuario ingresó la contraseña correcta (clave única)."""
 
     if st.session_state.get("password_correct", False):
         return True
 
-    st.markdown("""
-    <style>
-    ...
-    </style>
-    """, unsafe_allow_html=True)
+    st.set_page_config(
+        page_title="nutribere",
+        page_icon="🍏",
+        layout="centered",
+        initial_sidebar_state="collapsed",
+    )
 
-    col_left, col_center, col_right = st.columns([1, 1.2, 1])
+    st.markdown(
+        """
+        <style>
+        /* Fondo (profesional, con profundidad) */
+        .stApp{
+            background:
+              radial-gradient(1000px 520px at 50% 18%, rgba(255,255,255,0.10), rgba(0,0,0,0) 60%),
+              linear-gradient(180deg, #0C5A5D 0%, #083E40 100%);
+        }
+
+        /* Ocultar UI Streamlit */
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        div[data-testid="stToolbar"] {visibility: hidden;}
+
+        /* Centrado vertical suave */
+        div[data-testid="stVerticalBlock"]{
+            padding-top: 12vh;
+        }
+
+        /* Tarjeta SaaS: más contraste y bordes más definidos */
+        .nb-card{
+            background: #FFFFFF;
+            border: 1px solid rgba(17,24,39,0.10);
+            border-radius: 18px;
+            box-shadow:
+                0 24px 70px rgba(0,0,0,0.28),
+                0 1px 0 rgba(255,255,255,0.30) inset;
+            padding: 2.15rem 2.15rem 1.45rem 2.15rem;
+            backdrop-filter: blur(6px);
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        /* Marca */
+        .nb-icon{
+            font-size: 46px;
+            line-height: 1;
+            text-align: center;
+            margin: 0 0 0.55rem 0;
+        }
+        .nb-title{
+            font-size: 34px;
+            font-weight: 850;
+            letter-spacing: -0.9px;
+            margin: 0;
+            color: #0C5A5D;
+            text-align: center;
+        }
+        .nb-sub{
+            margin: 0.45rem 0 1.25rem 0;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: rgba(17,24,39,0.55);
+            text-align: center;
+        }
+
+        /* Input: más “SaaS”, mejor contraste */
+        div[data-baseweb="input"]{
+            background: #F7F8FA !important;
+            border: 1px solid rgba(17,24,39,0.14) !important;
+            border-radius: 12px !important;
+            padding: 6px 10px !important;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+        div[data-baseweb="input"]:focus-within{
+            border-color: rgba(12,90,93,0.65) !important;
+            box-shadow: 0 0 0 4px rgba(12,90,93,0.14) !important;
+        }
+        input{
+            color: rgba(17,24,39,0.86) !important;
+            font-weight: 650 !important;
+        }
+
+        /* Botón */
+        .stButton > button{
+            width: 100% !important;
+            background: #FBC02D !important;
+            color: #083E40 !important;
+            font-weight: 900 !important;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 14px 16px !important;
+            margin-top: 12px !important;
+            box-shadow: 0 10px 22px rgba(251,192,45,0.38) !important;
+            transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+        }
+        .stButton > button:hover{
+            transform: translateY(-1px);
+            box-shadow: 0 14px 28px rgba(251,192,45,0.48) !important;
+            filter: brightness(1.02);
+        }
+
+        /* Footer dentro de tarjeta */
+        .nb-foot{
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 11px;
+            color: rgba(17,24,39,0.35);
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Layout: centro estable (sin selectores frágiles)
+    col_left, col_center, col_right = st.columns([1, 1.35, 1])
 
     with col_center:
         st.markdown("<div class='nb-card'>", unsafe_allow_html=True)
@@ -343,7 +456,7 @@ def check_password():
             type="password",
             key="password_input",
             label_visibility="collapsed",
-            placeholder="🔑 Ingresa tu clave de acceso"
+            placeholder="🔑 Ingresa tu clave de acceso",
         )
 
         if st.button("Acceder a plataforma"):
@@ -354,9 +467,11 @@ def check_password():
                 st.error("Clave incorrecta")
 
         st.markdown("<div class='nb-foot'>© 2026 Nutribere Studio</div>", unsafe_allow_html=True)
+
         st.markdown("</div>", unsafe_allow_html=True)
 
     return False
+
 
 
 
@@ -463,6 +578,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
