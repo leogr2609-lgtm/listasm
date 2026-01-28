@@ -26,7 +26,7 @@ COLOR_WHITE = (255, 255, 255)
 st.set_page_config(
     page_title="Nutribere Studio",
     page_icon="🍏",
-    layout="centered",
+    layout="wide", # <--- ESTO ES LA CLAVE (Antes decía "centered" o no estaba)
     initial_sidebar_state="collapsed"
 )
 
@@ -560,6 +560,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
