@@ -342,11 +342,11 @@ def check_password():
     return False
 
 def main():
-    # --- BLOQUEO DE SEGURIDAD ---
+    # --- 1. BLOQUEO DE SEGURIDAD ---
     if not check_password():
-        st.stop()  # <--- AQUÍ SE DETIENE SI NO HAY PASSWORD
+        st.stop()  # Se detiene aquí si no hay password correcto
     
-    # --- AQUÍ EMPIEZA TU APP NORMAL ---
+    # --- 2. DISEÑO DE CABECERA ---
     st.markdown("<div style='text-align: center; margin-bottom: 30px;'>", unsafe_allow_html=True)
     st.markdown("<h1 style='font-size: 50px; margin-bottom: 0;'>nutribere</h1>", unsafe_allow_html=True)
     st.markdown("<div style='text-align: center; margin-bottom: 30px;'>", unsafe_allow_html=True)
@@ -354,7 +354,7 @@ def main():
     st.markdown("<p style='font-size: 14px; opacity: 0.8; letter-spacing: 2px;'>IMPRESORA DE LOGÍSTICA</p>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # --- CARD 1: ENTRADAS ---
+    # --- 3. ENTRADAS DE USUARIO ---
     with st.container():
         col1, col2 = st.columns([1, 1])
         with col1:
@@ -363,18 +363,29 @@ def main():
         with col2:
             archivo_pdf = st.file_uploader("2. Sube el Plan (PDF)", type="pdf")
 
+    # --- 4. DETECTOR DE CAMBIO DE ARCHIVO (ESTO CORRIGE EL ERROR) ---
+    if archivo_pdf:
+        # Si el nombre del PDF actual NO es igual al que procesamos antes...
+        if st.session_state.get("ultimo_archivo_nombre") != archivo_pdf.name:
+            # Limpiamos la memoria de la IA para que analice el nuevo plan
+            if 'datos_ia' in st.session_state:
+                del st.session_state.datos_ia
+            # Guardamos el nombre de este nuevo archivo para la siguiente comparación
+            st.session_state.ultimo_archivo_nombre = archivo_pdf.name
+
     st.write("") 
 
-    # --- LÓGICA ---
+    # --- 5. LÓGICA DE PROCESAMIENTO E IA ---
     datos_para_pdf = {}
     
     if archivo_pdf and nombre_paciente:
         
+        # Solo llama a la IA si no hay datos guardados (o si los borramos arriba)
         if 'datos_ia' not in st.session_state:
             with st.spinner("🧠 Analizando el menú..."):
                 st.session_state.datos_ia = procesar_con_ia(archivo_pdf)
         
-        # --- CARD 2: REVISIÓN ---
+        # --- 6. REVISIÓN Y EDICIÓN ---
         if st.session_state.datos_ia:
             with st.container():
                 st.markdown(f"<h3 style='border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 20px;'>📋 Revisión: {nombre_paciente}</h3>", unsafe_allow_html=True)
@@ -400,7 +411,7 @@ def main():
 
                 st.write("")
                 
-                # --- BOTÓN DE ACCIÓN ---
+                # --- 7. BOTÓN DE IMPRESIÓN ---
                 col1, col2, col3 = st.columns([1, 2, 1])
                 with col2:
                     if st.button("✨ IMPRIMIR LISTA OFICIAL"):
@@ -429,7 +440,6 @@ def main():
         st.warning("⚠️ Por favor escribe el nombre del paciente antes de continuar.")
 
 if __name__ == "__main__":
-
     main()
 
 
