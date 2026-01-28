@@ -338,14 +338,15 @@ def check_password():
 
     /* Centrado y tarjeta: estilizamos el container dentro de la columna central */
     /* Esto es mucho más estable que intentar "wrappear" con <div> */
-    div[data-testid="column"]:nth-of-type(2) div[data-testid="stContainer"]{
-        background: rgba(255,255,255,0.96);
-        border: 1px solid rgba(0,0,0,0.06);
-        border-radius: 18px;
-        box-shadow: 0 18px 60px rgba(0,0,0,0.22);
-        padding: 2.25rem 2.25rem 1.5rem 2.25rem;
-        backdrop-filter: blur(6px);
-    }
+.nb-card{
+    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 18px;
+    box-shadow: 0 18px 60px rgba(0,0,0,0.22);
+    padding: 2.25rem 2.25rem 1.5rem 2.25rem;
+    backdrop-filter: blur(6px);
+}
+
 
     /* Header (marca) */
     .nb-title{
