@@ -319,142 +319,45 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
 import streamlit as st
 
 def check_password():
+
     if st.session_state.get("password_correct", False):
         return True
 
     st.markdown("""
     <style>
-    /* Fondo */
-    .stApp{
-        background:
-          radial-gradient(1200px 700px at 50% 20%, rgba(255,255,255,0.06), rgba(0,0,0,0) 60%),
-          linear-gradient(180deg, #0C5A5D 0%, #0A4D50 100%);
-    }
-
-    /* Ocultar UI Streamlit */
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
-    div[data-testid="stToolbar"] {visibility: hidden;}
-
-    /* Centrado y tarjeta: estilizamos el container dentro de la columna central */
-    /* Esto es mucho más estable que intentar "wrappear" con <div> */
-.nb-card{
-    background: rgba(255,255,255,0.96);
-    border: 1px solid rgba(0,0,0,0.06);
-    border-radius: 18px;
-    box-shadow: 0 18px 60px rgba(0,0,0,0.22);
-    padding: 2.25rem 2.25rem 1.5rem 2.25rem;
-    backdrop-filter: blur(6px);
-}
-
-
-    /* Header (marca) */
-    .nb-title{
-        font-size: 34px;
-        font-weight: 800;
-        letter-spacing: -0.8px;
-        margin: 0;
-        color: #0C5A5D;
-        text-align:center;
-    }
-    .nb-sub{
-        margin: 0.35rem 0 1.35rem 0;
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 1.6px;
-        text-transform: uppercase;
-        color: rgba(0,0,0,0.55);
-        text-align:center;
-    }
-    .nb-icon{
-        font-size: 44px;
-        line-height:1;
-        text-align:center;
-        margin-bottom:0.35rem;
-    }
-
-    /* Input */
-    div[data-baseweb="input"]{
-        background: #F7F8FA !important;
-        border: 1px solid rgba(0,0,0,0.12) !important;
-        border-radius: 12px !important;
-        padding: 6px 10px !important;
-        transition: border-color .15s ease, box-shadow .15s ease;
-    }
-    div[data-baseweb="input"]:focus-within{
-        border-color: rgba(12,90,93,0.55) !important;
-        box-shadow: 0 0 0 4px rgba(12,90,93,0.12) !important;
-    }
-    input{
-        color: rgba(0,0,0,0.82) !important;
-        font-weight: 600 !important;
-    }
-
-    /* Botón */
-    .stButton > button{
-        width: 100% !important;
-        background: #FBC02D !important;
-        color: #083E40 !important;
-        font-weight: 900 !important;
-        text-transform: uppercase;
-        letter-spacing: 1.2px;
-        border: none !important;
-        border-radius: 12px !important;
-        padding: 14px 16px !important;
-        margin-top: 12px !important;
-        box-shadow: 0 10px 22px rgba(251,192,45,0.35) !important;
-        transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
-    }
-    .stButton > button:hover{
-        transform: translateY(-1px);
-        box-shadow: 0 14px 28px rgba(251,192,45,0.45) !important;
-        filter: brightness(1.02);
-    }
-
-    /* Footer dentro de tarjeta */
-    .nb-foot{
-        text-align:center;
-        margin-top: 1rem;
-        font-size: 11px;
-        color: rgba(0,0,0,0.35);
-    }
-
-    /* Para empujar el bloque al centro vertical sin hacks de st.write() */
-    div[data-testid="stVerticalBlock"]{
-        padding-top: 10vh;
-    }
+    ...
     </style>
     """, unsafe_allow_html=True)
 
-    # Centrado horizontal con columnas
     col_left, col_center, col_right = st.columns([1, 1.2, 1])
 
-with col_center:
-    st.markdown("<div class='nb-card'>", unsafe_allow_html=True)
+    with col_center:
+        st.markdown("<div class='nb-card'>", unsafe_allow_html=True)
 
-    st.markdown("<div class='nb-icon'>🍏</div>", unsafe_allow_html=True)
-    st.markdown("<h1 class='nb-title'>nutribere</h1>", unsafe_allow_html=True)
-    st.markdown("<div class='nb-sub'>Logística alimentaria</div>", unsafe_allow_html=True)
+        st.markdown("<div class='nb-icon'>🍏</div>", unsafe_allow_html=True)
+        st.markdown("<h1 class='nb-title'>nutribere</h1>", unsafe_allow_html=True)
+        st.markdown("<div class='nb-sub'>Logística alimentaria</div>", unsafe_allow_html=True)
 
-    password = st.text_input(
-        "Password",
-        type="password",
-        key="password_input",
-        label_visibility="collapsed",
-        placeholder="🔑 Ingresa tu clave de acceso"
-    )
+        password = st.text_input(
+            "Password",
+            type="password",
+            key="password_input",
+            label_visibility="collapsed",
+            placeholder="🔑 Ingresa tu clave de acceso"
+        )
 
-    if st.button("Acceder a plataforma"):
-        if password == st.secrets["PASSWORD_ACCESO"]:
-            st.session_state["password_correct"] = True
-            st.rerun()
-        else:
-            st.error("Clave incorrecta")
+        if st.button("Acceder a plataforma"):
+            if password == st.secrets["PASSWORD_ACCESO"]:
+                st.session_state["password_correct"] = True
+                st.rerun()
+            else:
+                st.error("Clave incorrecta")
 
-    st.markdown("<div class='nb-foot'>© 2026 Nutribere Studio</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("<div class='nb-foot'>© 2026 Nutribere Studio</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
     return False
+
 
 
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
@@ -560,6 +463,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
