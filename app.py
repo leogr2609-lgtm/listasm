@@ -323,80 +323,90 @@ def check_password():
     if st.session_state.get("password_correct", False):
         return True
 
-    # --- CSS AGRESIVO (ESTILO HEVY/SAAS) ---
-    st.markdown("""
-    <style>
-    /* 1. FONDO BLANCO TOTAL (Aplastamos el config.toml) */
-    [data-testid="stAppViewContainer"] {
-        background-color: #FFFFFF !important;
-    }
+    # --- 🎨 PANEL DE CONTROL DE DISEÑO (EDITA AQUÍ) ---
+    # Cambia estos códigos Hex para probar colores
+    COLOR_TITULO = "#111827"    # Gris muy oscuro (Casi negro)
+    COLOR_SUBTITULO = "#6B7280" # Gris medio
+    COLOR_BOTON = "#0C5A5D"     # Tu Verde Teal Original (O prueba #1F2937 para negro)
+    TEXTO_BOTON = "#FFFFFF"     # Color de la letra del botón
     
-    /* 2. TEXTOS (Forzamos oscuro porque el fondo es blanco) */
-    h1, h2, h3, p, span, div, label {
-        color: #1F2937 !important; /* Gris casi negro profesional */
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    }
-    
-    /* 3. INPUTS (Estilo Hevy: Borde fino, fondo blanco) */
-    div[data-baseweb="input"] {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E5E7EB !important; /* Gris muy suave */
-        border-radius: 8px !important;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    input {
-        color: #111827 !important; /* Texto negro al escribir */
-    }
+    # Textos (Cámbialos aquí fácilmente)
+    TXT_TITULO = "Iniciar Sesión"
+    TXT_SUBTITULO = "Bienvenida de nuevo al sistema de logística."
+    IMG_DERECHA = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
 
-    /* 4. EL BOTÓN (ADIÓS AMARILLO - HOLA PROFESIONAL) */
-    /* Lo hacemos Gris Oscuro / Teal Profundo para que se vea serio */
-    div[data-testid="stButton"] button {
+    # -------------------------------------------------------
+
+    # --- CSS CORREGIDO ---
+    st.markdown(f"""
+    <style>
+    /* 1. Limpieza General */
+    [data-testid="stAppViewContainer"] {{
+        background-color: #FFFFFF !important;
+    }}
+    header, footer {{visibility: hidden;}}
+    
+    /* 2. Tipografía (Sin sombras raras) */
+    h1, h2, h3, p, label {{
+        font-family: 'Inter', sans-serif !important;
+        text-shadow: none !important; /* <--- ADIÓS SOMBRA */
+    }}
+    
+    /* 3. Inputs Limpios */
+    div[data-baseweb="input"] {{
+        background-color: #FFFFFF !important;
+        border: 1px solid #E5E7EB !important;
+        border-radius: 8px !important;
+    }}
+    
+    /* 4. Botón Personalizable */
+    div[data-testid="stButton"] button {{
         width: 100%;
-        background-color: #111827 !important; /* Casi negro (Estilo Apple/Hevy) */
-        color: #FFFFFF !important;
+        background-color: {COLOR_BOTON} !important; /* Usa tu variable */
+        color: {TEXTO_BOTON} !important;
         border: none;
-        padding-top: 12px !important;
-        padding-bottom: 12px !important;
+        padding: 12px !important;
         font-weight: 600 !important;
         border-radius: 8px !important;
-        font-size: 16px !important;
-        transition: all 0.2s;
-    }
-    div[data-testid="stButton"] button:hover {
-        background-color: #000000 !important; /* Negro total al pasar mouse */
+        transition: transform 0.1s;
+    }}
+    div[data-testid="stButton"] button:hover {{
+        opacity: 0.9;
         transform: scale(1.01);
-    }
+    }}
 
-    /* 5. ARREGLAR LA IMAGEN DE LA DERECHA */
-    /* Quitamos el padding de la columna derecha para que la imagen pegue al borde */
-    div[data-testid="column"]:nth-of-type(2) {
+    /* 5. Ajuste de Imagen Derecha */
+    div[data-testid="column"]:last-child {{
         padding-top: 0px;
-    }
-    
-    /* Ocultar header/footer */
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
+    }}
     </style>
     """, unsafe_allow_html=True)
 
-    # --- LAYOUT (Izquierda: Login | Derecha: Visual) ---
-    col_login, col_imagen = st.columns([1, 1.3], gap="large")
+    # --- LAYOUT INTELIGENTE (LA SOLUCIÓN DE POSICIÓN) ---
+    # Usamos 3 columnas en lugar de 2:
+    # Col 1: ESPACIO VACÍO (Empuja todo a la derecha)
+    # Col 2: EL FORMULARIO (Donde trabajas)
+    # Col 3: LA IMAGEN (Lado derecho)
+    
+    # Ajusta estos números para moverlo más a la izq o der:
+    # [0.4 (Espacio), 1 (Formulario), 1.8 (Imagen)]
+    col_espacio, col_login, col_imagen = st.columns([0.4, 1, 1.8], gap="large")
 
-    # --- IZQUIERDA: EL LOGIN ---
+    # --- COLUMNA 2: EL FORMULARIO ---
     with col_login:
         st.write("") 
         st.write("") 
-        st.write("") # Espaciado superior
+        st.write("") 
         
-        # Logo minimalista
-        st.markdown("<h3 style='color: #0C5A5D !important; margin: 0; font-size: 20px;'>🍏 nutribere</h3>", unsafe_allow_html=True)
+        # Logo
+        st.markdown("<h3 style='color: #0C5A5D !important; margin: 0; font-size: 18px;'>🍏 nutribere</h3>", unsafe_allow_html=True)
         
-        # Título Grande y Limpio
-        st.markdown("<h1 style='font-size: 40px; font-weight: 800; margin-top: 15px; margin-bottom: 10px; letter-spacing: -1px;'>Iniciar Sesión</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #6B7280 !important; font-size: 16px; margin-bottom: 40px;'>Bienvenida de nuevo al sistema de logística.</p>", unsafe_allow_html=True)
+        # Título y Subtítulo (Usando las variables de arriba)
+        st.markdown(f"<h1 style='color: {COLOR_TITULO}; font-size: 36px; font-weight: 700; margin-top: 10px; margin-bottom: 5px; letter-spacing: -0.5px;'>{TXT_TITULO}</h1>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: {COLOR_SUBTITULO}; font-size: 15px; margin-bottom: 30px;'>{TXT_SUBTITULO}</p>", unsafe_allow_html=True)
 
         # Input
-        st.markdown("<label style='font-weight: 500; font-size: 14px; margin-bottom: 5px; display:block;'>Contraseña</label>", unsafe_allow_html=True)
+        st.markdown(f"<label style='color: {COLOR_TITULO}; font-weight: 500; font-size: 14px; margin-bottom: 5px; display:block;'>Contraseña</label>", unsafe_allow_html=True)
         password = st.text_input(
             "Contraseña", 
             type="password", 
@@ -415,17 +425,12 @@ def check_password():
             else:
                 st.error("🔒 Contraseña incorrecta")
         
-        # Footer pequeño
-        st.markdown("<div style='margin-top: 30px; text-align: center;'><p style='color: #9CA3AF !important; font-size: 12px;'>Protected by Nutribere Secure Access © 2026</p></div>", unsafe_allow_html=True)
+        # Footer
+        st.markdown("<div style='margin-top: 40px; text-align: center;'><p style='color: #D1D5DB !important; font-size: 11px;'>Secure Access © 2026</p></div>", unsafe_allow_html=True)
 
-    # --- DERECHA: LA IMAGEN (CLAVE PARA QUE NO SE VEA AZUL PLANO) ---
+    # --- COLUMNA 3: IMAGEN ---
     with col_imagen:
-        # He seleccionado una imagen VERTICAL de estilo "Clean Tech/Medical"
-        # Esto cubrirá el lado derecho y quitará la sensación de "vacío azul".
-        st.image(
-            "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop",
-            use_container_width=True
-        )
+        st.image(IMG_DERECHA, use_container_width=True)
 
     return False
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
@@ -531,6 +536,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
