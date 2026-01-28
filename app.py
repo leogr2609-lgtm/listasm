@@ -316,180 +316,141 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
     return pdf.output(dest='S').encode('latin-1')
 
 # --- 6. INTERFAZ PRINCIPAL ---
-
 import streamlit as st
 
 def check_password():
-    """Retorna True si el usuario ingresó la contraseña correcta."""
-
     if st.session_state.get("password_correct", False):
         return True
 
-    st.markdown(
-        """
-        <style>
-        /* ====== APP BACKGROUND ====== */
-        .stApp {
-            background: radial-gradient(1200px 700px at 50% 20%, rgba(255,255,255,0.06), rgba(0,0,0,0) 60%),
-                        linear-gradient(180deg, #0C5A5D 0%, #0A4D50 100%);
-        }
+    st.markdown("""
+    <style>
+    /* Fondo */
+    .stApp{
+        background:
+          radial-gradient(1200px 700px at 50% 20%, rgba(255,255,255,0.06), rgba(0,0,0,0) 60%),
+          linear-gradient(180deg, #0C5A5D 0%, #0A4D50 100%);
+    }
 
-        /* Ocultar UI Streamlit */
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
-        div[data-testid="stToolbar"] {visibility: hidden;}
+    /* Ocultar UI Streamlit */
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    div[data-testid="stToolbar"] {visibility: hidden;}
 
-        /* ====== CENTER LAYOUT ====== */
-        /* Empuja el contenido al centro vertical/horizontal (sin st.write vacíos) */
-        .login-shell{
-            min-height: calc(100vh - 2rem);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2.5rem 1rem;
-        }
+    /* Centrado y tarjeta: estilizamos el container dentro de la columna central */
+    /* Esto es mucho más estable que intentar "wrappear" con <div> */
+    div[data-testid="column"]:nth-of-type(2) div[data-testid="stContainer"]{
+        background: rgba(255,255,255,0.96);
+        border: 1px solid rgba(0,0,0,0.06);
+        border-radius: 18px;
+        box-shadow: 0 18px 60px rgba(0,0,0,0.22);
+        padding: 2.25rem 2.25rem 1.5rem 2.25rem;
+        backdrop-filter: blur(6px);
+    }
 
-        /* ====== CARD ====== */
-        .login-card{
-            width: 100%;
-            max-width: 520px;
-            background: rgba(255,255,255,0.96);
-            border: 1px solid rgba(0,0,0,0.06);
-            border-radius: 18px;
-            box-shadow: 0 18px 60px rgba(0,0,0,0.22);
-            padding: 2.25rem 2.25rem 1.5rem 2.25rem;
-            backdrop-filter: blur(6px);
-        }
+    /* Header (marca) */
+    .nb-title{
+        font-size: 34px;
+        font-weight: 800;
+        letter-spacing: -0.8px;
+        margin: 0;
+        color: #0C5A5D;
+        text-align:center;
+    }
+    .nb-sub{
+        margin: 0.35rem 0 1.35rem 0;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1.6px;
+        text-transform: uppercase;
+        color: rgba(0,0,0,0.55);
+        text-align:center;
+    }
+    .nb-icon{
+        font-size: 44px;
+        line-height:1;
+        text-align:center;
+        margin-bottom:0.35rem;
+    }
 
-        .brand-wrap{
-            text-align: center;
-            margin-bottom: 1.35rem;
-        }
+    /* Input */
+    div[data-baseweb="input"]{
+        background: #F7F8FA !important;
+        border: 1px solid rgba(0,0,0,0.12) !important;
+        border-radius: 12px !important;
+        padding: 6px 10px !important;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    div[data-baseweb="input"]:focus-within{
+        border-color: rgba(12,90,93,0.55) !important;
+        box-shadow: 0 0 0 4px rgba(12,90,93,0.12) !important;
+    }
+    input{
+        color: rgba(0,0,0,0.82) !important;
+        font-weight: 600 !important;
+    }
 
-        .brand-icon{
-            font-size: 44px;
-            line-height: 1;
-            margin-bottom: 0.3rem;
-        }
+    /* Botón */
+    .stButton > button{
+        width: 100% !important;
+        background: #FBC02D !important;
+        color: #083E40 !important;
+        font-weight: 900 !important;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 14px 16px !important;
+        margin-top: 12px !important;
+        box-shadow: 0 10px 22px rgba(251,192,45,0.35) !important;
+        transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+    }
+    .stButton > button:hover{
+        transform: translateY(-1px);
+        box-shadow: 0 14px 28px rgba(251,192,45,0.45) !important;
+        filter: brightness(1.02);
+    }
 
-        .brand-title{
-            font-size: 34px;
-            font-weight: 800;
-            letter-spacing: -0.8px;
-            margin: 0;
-            color: #0C5A5D;
-        }
+    /* Footer dentro de tarjeta */
+    .nb-foot{
+        text-align:center;
+        margin-top: 1rem;
+        font-size: 11px;
+        color: rgba(0,0,0,0.35);
+    }
 
-        .brand-subtitle{
-            margin: 0.35rem 0 0 0;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 1.6px;
-            text-transform: uppercase;
-            color: rgba(0,0,0,0.55);
-        }
+    /* Para empujar el bloque al centro vertical sin hacks de st.write() */
+    div[data-testid="stVerticalBlock"]{
+        padding-top: 10vh;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-        /* ====== INPUT ====== */
-        /* Wrapper del input de Streamlit (BaseWeb) */
-        div[data-baseweb="input"]{
-            background: #F7F8FA !important;
-            border: 1px solid rgba(0,0,0,0.12) !important;
-            border-radius: 12px !important;
-            padding: 6px 10px !important;
-            box-shadow: none !important;
-            transition: border-color .15s ease, box-shadow .15s ease;
-        }
+    # Centrado horizontal con columnas
+    col_left, col_center, col_right = st.columns([1, 1.2, 1])
 
-        /* Cuando el input está enfocado: Streamlit suele aplicar :focus-within al wrapper */
-        div[data-baseweb="input"]:focus-within{
-            border-color: rgba(12,90,93,0.55) !important;
-            box-shadow: 0 0 0 4px rgba(12,90,93,0.12) !important;
-        }
+    with col_center:
+        # Todo lo de adentro quedará "tarjeteado" por CSS (stContainer)
+        with st.container():
+            st.markdown("<div class='nb-icon'>🍏</div>", unsafe_allow_html=True)
+            st.markdown("<h1 class='nb-title'>nutribere</h1>", unsafe_allow_html=True)
+            st.markdown("<div class='nb-sub'>Logística alimentaria</div>", unsafe_allow_html=True)
 
-        input{
-            color: rgba(0,0,0,0.82) !important;
-            font-weight: 600 !important;
-        }
+            password = st.text_input(
+                "Password",
+                type="password",
+                key="password_input",
+                label_visibility="collapsed",
+                placeholder="🔑 Ingresa tu clave de acceso"
+            )
 
-        /* ====== BUTTON ====== */
-        .stButton > button{
-            width: 100% !important;
-            background: #FBC02D !important;
-            color: #083E40 !important;
-            font-weight: 900 !important;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            border: none !important;
-            border-radius: 12px !important;
-            padding: 14px 16px !important;
-            margin-top: 12px !important;
-            box-shadow: 0 10px 22px rgba(251,192,45,0.35) !important;
-            transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
-        }
+            if st.button("Acceder a plataforma"):
+                if password == st.secrets["PASSWORD_ACCESO"]:
+                    st.session_state["password_correct"] = True
+                    st.rerun()
+                else:
+                    st.error("Clave incorrecta")
 
-        .stButton > button:hover{
-            transform: translateY(-1px);
-            box-shadow: 0 14px 28px rgba(251,192,45,0.45) !important;
-            filter: brightness(1.02);
-        }
-
-        .stButton > button:active{
-            transform: translateY(0px);
-            box-shadow: 0 10px 22px rgba(251,192,45,0.32) !important;
-        }
-
-        /* ====== ERROR MESSAGE (más sobrio) ====== */
-        div[data-testid="stAlert"]{
-            border-radius: 12px !important;
-        }
-
-        /* ====== FOOTER TEXT ====== */
-        .login-foot{
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 11px;
-            color: rgba(0,0,0,0.35);
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("<div class='login-shell'><div class='login-card'>", unsafe_allow_html=True)
-
-    # BRAND
-    st.markdown(
-        """
-        <div class="brand-wrap">
-            <div class="brand-icon">🍏</div>
-            <h1 class="brand-title">nutribere</h1>
-            <p class="brand-subtitle">Logística alimentaria</p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # INPUT
-    password = st.text_input(
-        "Password",
-        type="password",
-        key="password_input",
-        label_visibility="collapsed",
-        placeholder="🔑 Ingresa tu clave de acceso"
-    )
-
-    # BUTTON
-    if st.button("Acceder a plataforma"):
-        if password == st.secrets["PASSWORD_ACCESO"]:
-            st.session_state["password_correct"] = True
-            st.rerun()
-        else:
-            st.error("Clave incorrecta")
-
-    # FOOTER
-    st.markdown("<div class='login-foot'>© 2026 Nutribere Studio</div>", unsafe_allow_html=True)
-
-    st.markdown("</div></div>", unsafe_allow_html=True)
+            st.markdown("<div class='nb-foot'>© 2026 Nutribere Studio</div>", unsafe_allow_html=True)
 
     return False
 
@@ -597,6 +558,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
