@@ -334,34 +334,23 @@ def check_password():
 
     st.markdown(f"""
     <style>
-      /* Oculta chrome de Streamlit */
       header, footer {{ visibility: hidden; }}
-      [data-testid="stSidebar"] {{ display:none; }}
+      [data-testid="stSidebar"] {{ display: none; }}
 
-      /* Deja la página sin padding externo, pero controla el "respirado" adentro */
-      [data-testid="stAppViewContainer"] {{
-        background: #ffffff !important;
-      }}
-      .block-container {{
-        padding: 0 !important;
-        max-width: 100% !important;
-      }}
+      [data-testid="stAppViewContainer"] {{ background: #ffffff !important; }}
+      .block-container {{ padding: 0 !important; max-width: 100% !important; }}
 
-      /* Shell de pantalla completa */
-      .nb-shell {{
-        min-height: 100vh;
-        width: 100%;
-      }}
-
-      /* Panel izquierdo: centrado real */
-      .nb-login {{
+      /* Centrado vertical del panel izquierdo */
+      .nb-left-wrap {{
         height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 40px 24px;
       }}
-      .nb-card {{
+
+      /* “Tarjeta” aplicada al contenedor real de Streamlit usando :has() */
+      .nb-card-host:has(.nb-card-anchor) {{
         width: 100%;
         max-width: 520px;
         border: 1px solid #E5E7EB;
@@ -374,9 +363,8 @@ def check_password():
       .nb-brand {{
         font-family: -apple-system, system-ui, sans-serif !important;
         color: #0C5A5D !important;
-        font-weight: 800;
+        font-weight: 900;
         margin: 0 0 8px 0;
-        letter-spacing: 0.2px;
       }}
       .nb-title {{
         font-family: -apple-system, system-ui, sans-serif !important;
@@ -389,7 +377,7 @@ def check_password():
         font-family: -apple-system, system-ui, sans-serif !important;
         color: #6B7280 !important;
         font-size: 15px;
-        margin: 0 0 22px 0;
+        margin: 0 0 18px 0;
         line-height: 1.4;
       }}
       .nb-label {{
@@ -401,29 +389,24 @@ def check_password():
         margin: 14px 0 6px 0;
       }}
 
-      /* Inputs consistentes */
       div[data-baseweb="input"] {{
         background: #ffffff !important;
         border: 1px solid #E5E7EB !important;
         border-radius: 10px !important;
       }}
-      input {{
-        font-family: -apple-system, system-ui, sans-serif !important;
-      }}
 
-      /* Botón full */
       div[data-testid="stButton"] button {{
         width: 100%;
         background-color: #0C5A5D !important;
         color: white !important;
         padding: 12px 14px !important;
         border-radius: 10px !important;
-        font-weight: 800 !important;
+        font-weight: 900 !important;
         border: none !important;
         margin-top: 8px !important;
       }}
 
-      /* Panel derecho: imagen premium, no “gigante fea” */
+      /* Panel derecho imagen con borde y padding */
       .nb-hero {{
         height: 100vh;
         padding: 24px;
@@ -438,51 +421,32 @@ def check_password():
         box-shadow: 0 10px 30px rgba(0,0,0,0.10);
       }}
 
-      /* Responsive: en pantallas pequeñas oculta el hero */
       @media (max-width: 980px) {{
         .nb-hero {{ display:none; }}
-        .nb-login {{ height: auto; min-height: 100vh; }}
+        .nb-left-wrap {{ height: auto; min-height: 100vh; }}
       }}
     </style>
     """, unsafe_allow_html=True)
 
-    col_left, col_right = st.columns([1.05, 1.2], gap="large")
+    left, right = st.columns([1.05, 1.2], gap="large")
 
-    with col_left:
-        st.markdown('<div class="nb-shell"><div class="nb-login"><div class="nb-card">', unsafe_allow_html=True)
+    with left:
+        st.markdown('<div class="nb-left-wrap">', unsafe_allow_html=True)
 
-        st.markdown("<div class='nb-brand'>🍏 nutribere studio</div>", unsafe_allow_html=True)
-        st.markdown("<div class='nb-title'>Iniciar sesión</div>", unsafe_allow_html=True)
-        st.markdown("<div class='nb-sub'>Automatiza la logística de tus planes nutricionales.</div>", unsafe_allow_html=True)
+        # Host (contenedor real de Streamlit) donde cae la tarjeta por CSS
+        with st.container():
+            st.markdown('<div class="nb-card-anchor"></div>', unsafe_allow_html=True)
+            st.markdown("<div class='nb-brand'>🍏 nutribere studio</div>", unsafe_allow_html=True)
+            st.markdown("<div class='nb-title'>Iniciar sesión</div>", unsafe_allow_html=True)
+            st.markdown("<div class='nb-sub'>Automatiza la logística de tus planes nutricionales.</div>", unsafe_allow_html=True)
 
-        with st.form("login_form", clear_on_submit=False):
-            st.markdown("<div class='nb-label'>USUARIO</div>", unsafe_allow_html=True)
-            usuario = st.text_input(
-                "Usuario", key="user_input", label_visibility="collapsed",
-                placeholder="ej. nutri_bere"
-            )
+            with st.form("login_form", clear_on_submit=False):
+                st.markdown("<div class='nb-label'>USUARIO</div>", unsafe_allow_html=True)
+                usuario = st.text_input("Usuario", label_visibility="collapsed", placeholder="ej. nutri_bere", key="user_input")
 
-            st.markdown("<div class='nb-label'>CONTRASEÑA</div>", unsafe_allow_html=True)
-            password = st.text_input(
-                "Contraseña", type="password", key="password_input",
-                label_visibility="collapsed", placeholder="••••••••"
-            )
+                st.markdown("<div class='nb-label'>CONTRASEÑA</div>", unsafe_allow_html=True)
+                password = st.text_input("Contraseña", type="password", label_visibility="collapsed", placeholder="••••••••
 
-            submitted = st.form_submit_button("ACCEDER AL SISTEMA")
-
-        if submitted:
-            if usuario.strip().lower() == "nutribere" and password == st.secrets["PASSWORD_ACCESO"]:
-                st.session_state["password_correct"] = True
-                st.rerun()
-            else:
-                st.error("🔒 Credenciales incorrectas.")
-
-        st.markdown("</div></div></div>", unsafe_allow_html=True)
-
-    with col_right:
-        st.markdown('<div class="nb-hero"><div class="nb-hero-inner"></div></div>', unsafe_allow_html=True)
-
-    return False
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
 def limpiar_memoria():
     """Esta función se activa SOLA cuando cambias el archivo PDF."""
@@ -586,6 +550,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
