@@ -323,122 +323,156 @@ def check_password():
     if st.session_state.get("password_correct", False):
         return True
 
-    # --- 1. PANEL DE CONTROL (AJUSTA AQUÍ TUS PREFERENCIAS) ---
+    # --- 🎛️ PANEL DE CONTROL (AJUSTA TU DISEÑO AQUÍ) ---
     
-    # A. COLORES
-    COLOR_FONDO = "#EAE8FF"     # Blanco puro
-    COLOR_TEXTO = "#2D3142"     # Negro puro (Para arreglar lo del texto invisible)
-    COLOR_BOTON = "#B0D7FF"     # Tu verde
+    # 1. PROPORCIONES (Para imitar a Hevy)
+    # Hevy usa aprox: 15% espacio | 30% formulario | 55% imagen
+    ANCHO_ESPACIO_IZQ = 0.6   # Margen izquierdo (para que no se pegue al borde)
+    ANCHO_FORMULARIO = 1.4    # Ancho del login
+    ANCHO_IMAGEN = 3.0        # Ancho de la imagen (El lado derecho grande)
     
-    # B. CONTROL DE POSICIONES (La suma de todo no importa, es proporcional)
-    # Juega con estos 4 números para mover las cosas:
-    ANCHO_ESPACIO_IZQ = 0.5  # Empuja el login hacia el centro
-    ANCHO_LOGIN = 1.0        # Qué tan ancho es el formulario
-    ANCHO_IMAGEN = 1.5       # Qué tan ancha es la imagen
-    ANCHO_ESPACIO_DER = 0.1  # <--- IMPORTANTE: Si subes esto, la imagen se despega de la derecha
+    # 2. COLORES & ESTILO
+    COLOR_FONDO_IZQ = "#FFFFFF"   # Blanco puro (Hevy style)
+    COLOR_TEXTO = "#111827"       # Negro suave (Charcoal)
+    COLOR_BOTON = "#9CA3AF"       # Gris Hevy (O usa tu verde #0C5A5D)
+    COLOR_BOTON_TEXTO = "#FFFFFF" 
     
+    # 3. IMAGEN LATERAL
+    # Nota: Usa una imagen VERTICAL para que llene bien el espacio
     IMG_URL = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
 
     # -----------------------------------------------------------
 
-    # --- 2. CSS "ROMPE-CONFIG" (PARA ARREGLAR EL TEXTO BLANCO) ---
+    # --- CSS AVANZADO (PARA CORREGIR EL TEXTO BLANCO Y DAR ESTILO) ---
     st.markdown(f"""
     <style>
-    /* Forzar fondo blanco ignorando el tema */
+    /* 1. FORZAR MODO CLARO (Soluciona el texto invisible) */
     [data-testid="stAppViewContainer"] {{
-        background-color: {COLOR_FONDO} !important;
+        background-color: {COLOR_FONDO_IZQ} !important;
     }}
     
-    /* Forzar texto NEGRO en todos lados (Títulos, párrafos, etiquetas) */
-    h1, h2, h3, p, label, span, div {{
+    /* 2. TIPOGRAFÍA MINIMALISTA (Estilo Apple/Hevy) */
+    * {{
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        letter-spacing: -0.2px;
+    }}
+    h1, h2, h3, p, span, div, label {{
         color: {COLOR_TEXTO} !important;
         text-shadow: none !important;
     }}
     
-    /* INPUTS (Cajas de texto) */
-    /* Forzamos el texto de adentro a negro también */
+    /* 3. INPUTS (Cajas de texto estilo Hevy) */
     div[data-baseweb="input"] {{
         background-color: #FFFFFF !important;
-        border: 1px solid #D1D5DB !important;
-        color: #000000 !important;
+        border: 1px solid #E5E7EB !important; /* Borde gris muy suave */
+        border-radius: 8px !important;
+        padding: 5px !important;
+        box-shadow: none !important; /* Sin sombras raras */
     }}
+    /* Corrección crítica para texto invisible en modo oscuro */
     input {{
-        color: #000000 !important; /* Texto que escribes */
+        color: #000000 !important; 
         -webkit-text-fill-color: #000000 !important;
-        caret-color: #000000 !important; /* El palito que parpadea */
+        caret-color: #000000 !important;
     }}
     
-    /* BOTÓN */
+    /* 4. BOTÓN (Estilo Hevy: Ancho y Neutro) */
     div[data-testid="stButton"] button {{
+        width: 100%;
         background-color: {COLOR_BOTON} !important;
-        color: #FFFFFF !important; /* Texto blanco en el botón */
+        color: {COLOR_BOTON_TEXTO} !important;
         border: none;
-        padding: 12px;
-        font-weight: bold;
-        transition: opacity 0.3s;
+        padding: 14px !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+        font-size: 16px !important;
+        margin-top: 10px;
+        transition: background-color 0.2s;
     }}
     div[data-testid="stButton"] button:hover {{
-        opacity: 0.9;
+        background-color: #4B5563 !important; /* Gris más oscuro al pasar mouse */
     }}
 
-    /* Ocultar elementos extra */
+    /* 5. ARREGLAR MÁRGENES DE LA IMAGEN (Full Bleed) */
+    /* Quitamos padding de la columna derecha para que la imagen toque los bordes */
+    div[data-testid="column"]:last-child {{
+        padding-top: 0px !important;
+        padding-right: 0px !important;
+        padding-left: 20px !important; /* Separación con el formulario */
+    }}
+    
+    /* Ocultar header/footer de Streamlit */
     header, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-    # --- 3. LAYOUT DE 4 COLUMNAS (PARA CONTROL TOTAL) ---
-    col_izq, col_login, col_img, col_der = st.columns(
-        [ANCHO_ESPACIO_IZQ, ANCHO_LOGIN, ANCHO_IMAGEN, ANCHO_ESPACIO_DER], 
-        gap="medium"
+    # --- LAYOUT DE 3 COLUMNAS (Espacio | Formulario | Imagen) ---
+    col_espacio, col_form, col_img = st.columns(
+        [ANCHO_ESPACIO_IZQ, ANCHO_FORMULARIO, ANCHO_IMAGEN], 
+        gap="small"
     )
 
-    # --- COLUMNA DEL FORMULARIO ---
-    with col_login:
+    # --- COLUMNA CENTRAL (EL FORMULARIO) ---
+    with col_form:
+        # Espaciadores para centrar verticalmente "a ojo"
         st.write("") 
         st.write("") 
-        st.write("") # Espacio superior para centrar verticalmente
+        st.write("") 
+        st.write("")
         
-        st.markdown("<h3 style='margin:0; font-size:18px; color:#0C5A5D !important;'>🍏 nutribere</h3>", unsafe_allow_html=True)
-        st.markdown("<h1 style='font-size:36px; font-weight:800; margin-top:5px;'>Iniciar Sesión</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:14px; margin-bottom:30px; color:#666 !important;'>Ingresa tus credenciales de especialista.</p>", unsafe_allow_html=True)
-
-        # --- CAMPO 1: USUARIO (NUEVO) ---
-        st.markdown("<label style='font-size:12px; font-weight:bold;'>USUARIO</label>", unsafe_allow_html=True)
+        # Títulos Minimalistas
+        st.markdown("<h1 style='font-size: 32px; font-weight: 700; margin-bottom: 5px; text-align: left;'>Log In</h1>", unsafe_allow_html=True)
+        # Opcional: Botones de Google/Apple falsos para estética (como en la foto)
+        # st.info("G   Login with Google") 
+        
+        st.write("") # Espacio
+        
+        # --- INPUT 1: USUARIO ---
+        st.markdown("<p style='font-size: 13px; font-weight: 500; margin-bottom: 5px; color: #374151 !important;'>Email or username</p>", unsafe_allow_html=True)
         usuario = st.text_input(
             "Usuario",
             key="user_input",
             label_visibility="collapsed",
-            placeholder="Ej. nutri_berenice"
+            placeholder="" # Hevy no usa placeholder, deja el campo limpio
         )
-        st.write("") # Pequeño espacio
+        
+        st.write("") # Espacio pequeño
 
-        # --- CAMPO 2: CONTRASEÑA ---
-        st.markdown("<label style='font-size:12px; font-weight:bold;'>CONTRASEÑA</label>", unsafe_allow_html=True)
+        # --- INPUT 2: PASSWORD ---
+        st.markdown("<p style='font-size: 13px; font-weight: 500; margin-bottom: 5px; color: #374151 !important;'>Password</p>", unsafe_allow_html=True)
         password = st.text_input(
             "Contraseña", 
             type="password", 
             key="password_input",
             label_visibility="collapsed",
-            placeholder="••••••••"
+            placeholder=""
         )
         
         st.write("")
-        st.write("")
-
-        # --- BOTÓN ---
-        if st.button("ACCEDER AL SISTEMA", use_container_width=True):
-            # AQUI LUEGO PUEDES AGREGAR LOGICA PARA VALIDAR EL USUARIO TAMBIÉN
+        
+        # --- BOTÓN DE ACCIÓN ---
+        # Nota: Puse el botón gris como Hevy. Si lo quieres verde, cambia la variable arriba.
+        if st.button("Login", use_container_width=True):
             if password == st.secrets["PASSWORD_ACCESO"]:
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
-                st.error("🔒 Credenciales incorrectas")
+                st.error("Credenciales incorrectas")
 
-    # --- COLUMNA DE IMAGEN ---
+        # Links de texto abajo
+        st.markdown("""
+            <div style='text-align: center; margin-top: 20px;'>
+                <a href='#' style='color: #2563EB; text-decoration: none; font-size: 13px; font-weight: 500;'>Forgot Password</a>
+                <br><br>
+                <span style='color: #6B7280; font-size: 13px;'>New to Nutribere? </span>
+                <a href='#' style='color: #2563EB; text-decoration: none; font-size: 13px; font-weight: 500;'>Sign Up</a>
+            </div>
+        """, unsafe_allow_html=True)
+
+    # --- COLUMNA DERECHA (LA IMAGEN GRANDE) ---
     with col_img:
+        # Muestra la imagen llenando el espacio
         st.image(IMG_URL, use_container_width=True)
-        
-    # La col_der se queda vacía, solo sirve para empujar la imagen a la izquierda.
 
     return False
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
@@ -544,6 +578,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
