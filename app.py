@@ -445,7 +445,14 @@ def check_password():
                 usuario = st.text_input("Usuario", label_visibility="collapsed", placeholder="ej. nutri_bere", key="user_input")
 
                 st.markdown("<div class='nb-label'>CONTRASEÑA</div>", unsafe_allow_html=True)
-                password = st.text_input("Contraseña", type="password", label_visibility="collapsed", placeholder="••••••••
+                password = st.text_input(
+    "Contraseña",
+    type="password",
+    label_visibility="collapsed",
+    placeholder="••••••••",
+    key="password_input"
+)
+
 
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
 def limpiar_memoria():
@@ -550,6 +557,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
