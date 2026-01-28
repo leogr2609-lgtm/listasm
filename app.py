@@ -323,155 +323,155 @@ def check_password():
     if st.session_state.get("password_correct", False):
         return True
 
-    # --- 🎛️ PANEL DE CONTROL (AJUSTA TU DISEÑO AQUÍ) ---
+    # --- 🎛️ PANEL DE CONTROL DE DISEÑO ---
     
-    # 1. PROPORCIONES (Para imitar a Hevy)
-    # Hevy usa aprox: 15% espacio | 30% formulario | 55% imagen
-    ANCHO_ESPACIO_IZQ = 0.6   # Margen izquierdo (para que no se pegue al borde)
-    ANCHO_FORMULARIO = 1.4    # Ancho del login
-    ANCHO_IMAGEN = 3.0        # Ancho de la imagen (El lado derecho grande)
+    # 1. PROPORCIONES (Layout de 4 Columnas)
+    # Estructura: [Espacio Izq | Formulario | Separador | Imagen]
+    ANCHO_ESPACIO_IZQ = 0.8   # Aumentado (+10%) para centrar más el formulario
+    ANCHO_FORMULARIO = 1.4    # El ancho de la caja de login
+    ANCHO_SEPARADOR = 0.4     # Espacio EXTRA entre formulario e imagen (Margen derecho del form)
+    ANCHO_IMAGEN = 3.2        # Imagen grande a la derecha
     
-    # 2. COLORES & ESTILO
-    COLOR_FONDO_IZQ = "#FFFFFF"   # Blanco puro (Hevy style)
-    COLOR_TEXTO = "#111827"       # Negro suave (Charcoal)
-    COLOR_BOTON = "#9CA3AF"       # Gris Hevy (O usa tu verde #0C5A5D)
-    COLOR_BOTON_TEXTO = "#FFFFFF" 
-    
-    # 3. IMAGEN LATERAL
-    # Nota: Usa una imagen VERTICAL para que llene bien el espacio
+    # 2. CONTENIDO (Español | Contexto Nutribere)
+    TXT_TITULO = "Portal de Especialista"
+    TXT_DESC = "Automatiza la logística de tus planes nutricionales. Convierte dietas en listas de compra exactas en segundos."
     IMG_URL = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
 
+    # 3. COLORES
+    COLOR_FONDO = "#FFFFFF"
+    COLOR_TEXTO = "#111827"   # Negro suave
+    COLOR_BOTON = "#0C5A5D"   # Tu Verde Teal (Marca)
+    
     # -----------------------------------------------------------
 
-    # --- CSS AVANZADO (PARA CORREGIR EL TEXTO BLANCO Y DAR ESTILO) ---
+    # --- CSS DE ALTA PRECISIÓN ---
     st.markdown(f"""
     <style>
-    /* 1. FORZAR MODO CLARO (Soluciona el texto invisible) */
+    /* 1. RESET GENERAL Y MODO CLARO */
     [data-testid="stAppViewContainer"] {{
-        background-color: {COLOR_FONDO_IZQ} !important;
+        background-color: {COLOR_FONDO} !important;
     }}
-    
-    /* 2. TIPOGRAFÍA MINIMALISTA (Estilo Apple/Hevy) */
     * {{
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         letter-spacing: -0.2px;
     }}
-    h1, h2, h3, p, span, div, label {{
+    
+    /* 2. TEXTOS Y COLORES */
+    h1, h2, h3, p, label, a {{
         color: {COLOR_TEXTO} !important;
         text-shadow: none !important;
     }}
     
-    /* 3. INPUTS (Cajas de texto estilo Hevy) */
+    /* 3. INPUTS PROFESIONALES */
     div[data-baseweb="input"] {{
         background-color: #FFFFFF !important;
-        border: 1px solid #E5E7EB !important; /* Borde gris muy suave */
+        border: 1px solid #E5E7EB !important;
         border-radius: 8px !important;
-        padding: 5px !important;
-        box-shadow: none !important; /* Sin sombras raras */
+        padding: 8px !important; /* Un poco más de aire dentro del input */
     }}
-    /* Corrección crítica para texto invisible en modo oscuro */
     input {{
-        color: #000000 !important; 
+        color: #000000 !important;
         -webkit-text-fill-color: #000000 !important;
-        caret-color: #000000 !important;
+        font-weight: 500 !important;
     }}
     
-    /* 4. BOTÓN (Estilo Hevy: Ancho y Neutro) */
+    /* 4. BOTÓN DE ACCIÓN */
     div[data-testid="stButton"] button {{
         width: 100%;
         background-color: {COLOR_BOTON} !important;
-        color: {COLOR_BOTON_TEXTO} !important;
+        color: #FFFFFF !important;
         border: none;
         padding: 14px !important;
         font-weight: 600 !important;
         border-radius: 8px !important;
-        font-size: 16px !important;
-        margin-top: 10px;
-        transition: background-color 0.2s;
+        font-size: 15px !important;
+        margin-top: 15px;
+        box-shadow: 0 4px 6px rgba(12, 90, 93, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
     }}
     div[data-testid="stButton"] button:hover {{
-        background-color: #4B5563 !important; /* Gris más oscuro al pasar mouse */
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(12, 90, 93, 0.2);
     }}
 
-    /* 5. ARREGLAR MÁRGENES DE LA IMAGEN (Full Bleed) */
-    /* Quitamos padding de la columna derecha para que la imagen toque los bordes */
+    /* 5. FULL BLEED IMAGEN (El truco para pegar la imagen a la derecha) */
+    /* Seleccionamos la ÚLTIMA columna y le quitamos todo el padding */
     div[data-testid="column"]:last-child {{
         padding-top: 0px !important;
-        padding-right: 0px !important;
-        padding-left: 20px !important; /* Separación con el formulario */
+        padding-right: 0px !important; /* PEGA LA IMAGEN AL BORDE DERECHO */
+        padding-bottom: 0px !important;
+    }}
+    /* Aseguramos que el contenedor principal no estorbe */
+    .block-container {{
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+        padding-right: 0rem !important; /* CRÍTICO */
+        max-width: 100% !important;
     }}
     
-    /* Ocultar header/footer de Streamlit */
+    /* Ocultar elementos extra */
     header, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-    # --- LAYOUT DE 3 COLUMNAS (Espacio | Formulario | Imagen) ---
-    col_espacio, col_form, col_img = st.columns(
-        [ANCHO_ESPACIO_IZQ, ANCHO_FORMULARIO, ANCHO_IMAGEN], 
+    # --- LAYOUT DE 4 COLUMNAS ---
+    # [ Espacio | Formulario | Separador | Imagen ]
+    col_izq, col_form, col_sep, col_img = st.columns(
+        [ANCHO_ESPACIO_IZQ, ANCHO_FORMULARIO, ANCHO_SEPARADOR, ANCHO_IMAGEN], 
         gap="small"
     )
 
-    # --- COLUMNA CENTRAL (EL FORMULARIO) ---
+    # --- COLUMNA DEL FORMULARIO ---
     with col_form:
-        # Espaciadores para centrar verticalmente "a ojo"
+        # Espaciadores verticales para centrar el contenido en la pantalla
         st.write("") 
         st.write("") 
         st.write("") 
         st.write("")
+        st.write("")
         
-        # Títulos Minimalistas
-        st.markdown("<h1 style='font-size: 32px; font-weight: 700; margin-bottom: 5px; text-align: left;'>Log In</h1>", unsafe_allow_html=True)
-        # Opcional: Botones de Google/Apple falsos para estética (como en la foto)
-        # st.info("G   Login with Google") 
-        
-        st.write("") # Espacio
-        
-        # --- INPUT 1: USUARIO ---
-        st.markdown("<p style='font-size: 13px; font-weight: 500; margin-bottom: 5px; color: #374151 !important;'>Email or username</p>", unsafe_allow_html=True)
-        usuario = st.text_input(
-            "Usuario",
-            key="user_input",
-            label_visibility="collapsed",
-            placeholder="" # Hevy no usa placeholder, deja el campo limpio
-        )
-        
-        st.write("") # Espacio pequeño
+        # 1. HEADER (Logo y Títulos)
+        st.markdown("<h3 style='font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #0C5A5D !important;'>🍏 nutribere studio</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h1 style='font-size: 38px; font-weight: 800; line-height: 1.1; margin-bottom: 10px;'>{TXT_TITULO}</h1>", unsafe_allow_html=True)
+        st.markdown(f"<p style='font-size: 16px; font-weight: 400; color: #6B7280 !important; line-height: 1.5; margin-bottom: 35px;'>{TXT_DESC}</p>", unsafe_allow_html=True)
 
-        # --- INPUT 2: PASSWORD ---
-        st.markdown("<p style='font-size: 13px; font-weight: 500; margin-bottom: 5px; color: #374151 !important;'>Password</p>", unsafe_allow_html=True)
-        password = st.text_input(
-            "Contraseña", 
-            type="password", 
-            key="password_input",
-            label_visibility="collapsed",
-            placeholder=""
-        )
+        # 2. INPUTS
+        st.markdown("<label style='font-size: 13px; font-weight: 600; color: #374151 !important;'>USUARIO</label>", unsafe_allow_html=True)
+        usuario = st.text_input("Usuario", key="user_input", label_visibility="collapsed", placeholder="ej. berenice_admin")
         
-        st.write("")
+        st.write("") # Pequeño espacio
         
-        # --- BOTÓN DE ACCIÓN ---
-        # Nota: Puse el botón gris como Hevy. Si lo quieres verde, cambia la variable arriba.
-        if st.button("Login", use_container_width=True):
+        st.markdown("<label style='font-size: 13px; font-weight: 600; color: #374151 !important;'>CONTRASEÑA DE ACCESO</label>", unsafe_allow_html=True)
+        password = st.text_input("Contraseña", type="password", key="password_input", label_visibility="collapsed", placeholder="••••••••")
+        
+        # 3. BOTÓN
+        if st.button("INGRESAR AL SISTEMA", use_container_width=True):
             if password == st.secrets["PASSWORD_ACCESO"]:
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
-                st.error("Credenciales incorrectas")
+                st.error("🔒 Credenciales incorrectas")
 
-        # Links de texto abajo
+        # 4. FOOTER (Estilo SaaS)
+        st.write("")
+        st.write("")
         st.markdown("""
-            <div style='text-align: center; margin-top: 20px;'>
-                <a href='#' style='color: #2563EB; text-decoration: none; font-size: 13px; font-weight: 500;'>Forgot Password</a>
-                <br><br>
-                <span style='color: #6B7280; font-size: 13px;'>New to Nutribere? </span>
-                <a href='#' style='color: #2563EB; text-decoration: none; font-size: 13px; font-weight: 500;'>Sign Up</a>
+            <div style='border-top: 1px solid #F3F4F6; padding-top: 20px; margin-top: 20px;'>
+                <div style='display: flex; gap: 15px; font-size: 12px; color: #9CA3AF;'>
+                    <a href='#' style='text-decoration: none; color: #6B7280 !important;'>Privacidad</a>
+                    <span style='color: #E5E7EB;'>|</span>
+                    <a href='#' style='text-decoration: none; color: #6B7280 !important;'>Términos</a>
+                    <span style='color: #E5E7EB;'>|</span>
+                    <a href='#' style='text-decoration: none; color: #6B7280 !important;'>Soporte Técnico</a>
+                </div>
+                <p style='font-size: 11px; color: #D1D5DB !important; margin-top: 10px;'>
+                    © 2026 Nutribere Studio. Versión Comercial v1.0
+                </p>
             </div>
         """, unsafe_allow_html=True)
 
-    # --- COLUMNA DERECHA (LA IMAGEN GRANDE) ---
+    # --- COLUMNA DE IMAGEN (SIN MÁRGENES) ---
     with col_img:
-        # Muestra la imagen llenando el espacio
         st.image(IMG_URL, use_container_width=True)
 
     return False
@@ -578,6 +578,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
