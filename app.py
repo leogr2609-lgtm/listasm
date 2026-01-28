@@ -323,94 +323,108 @@ def check_password():
     if st.session_state.get("password_correct", False):
         return True
 
-    # --- CSS ESPECÍFICO PARA EL LOGIN (ESTILO MATERIAL POMODORO) ---
+    # --- DISEÑO PROFESIONAL "MATERIAL CARD" ---
     st.markdown("""
     <style>
-    /* Ocultamos elementos extra de Streamlit para limpiar la vista */
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
-    
-    /* Fondo general más limpio para el login */
+    /* 1. EL FONDO DE PANTALLA (Tu Teal de Marca) */
     .stApp {
-        background-color: #0C5A5D; /* Mantenemos tu Teal de marca */
+        background-color: #0C5A5D;
     }
 
-    /* ESTILO DE LA TARJETA (Material Card) */
-    div[data-testid="stVerticalBlock"] > div[style*="background-color"] {
-        background-color: white !important;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2); /* Sombra suave "elevada" */
-        padding: 40px;
-        border: none; /* Quitamos bordes duros */
+    /* 2. LA TARJETA CENTRAL (La "Isla" blanca) */
+    /* Buscamos el contenedor vertical dentro de la columna central */
+    div[data-testid="column"] > div > div[data-testid="stVerticalBlock"] > div[style*="background-color"] {
+        background-color: #FFFFFF !important;
+        padding: 3rem !important;
+        border-radius: 15px !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important; /* Sombra fuerte para efecto 3D */
+        border: 1px solid rgba(0,0,0,0.05);
     }
-
-    /* INPUT (Estilo Material Design: Fondo grisáceo, línea inferior) */
+    
+    /* 3. INPUT (Estilo limpio y moderno) */
+    /* Quitamos bordes feos y ponemos una línea abajo o fondo suave */
     div[data-baseweb="input"] {
-        background-color: #F5F5F5 !important;
-        border: none;
-        border-radius: 4px 4px 0 0;
-        border-bottom: 2px solid #0C5A5D;
+        background-color: #F8F9FA !important; /* Gris muy clarito */
+        border: 1px solid #E0E0E0 !important;
+        border-radius: 8px !important;
+        padding: 5px !important;
     }
     input {
-        color: #333333 !important;
-        font-weight: 500;
+        color: #333 !important;
+        font-weight: 500 !important;
     }
 
-    /* BOTÓN (Estilo Material: Sombra, Mayúsculas, Sin bordes) */
-    .stButton>button {
-        width: 100%;
-        background-color: #FBC02D !important;
-        color: #0C5A5D !important;
-        font-weight: bold;
+    /* 4. BOTÓN (Grande, Ancho y Llamativo) */
+    .stButton > button {
+        width: 100% !important;
+        background-color: #FBC02D !important; /* Tu amarillo */
+        color: #0C5A5D !important; /* Texto verde oscuro */
+        font-weight: 800 !important;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        border-radius: 4px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        border: none;
-        padding-top: 12px;
-        padding-bottom: 12px;
+        letter-spacing: 1.5px;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 15px !important;
+        margin-top: 10px !important;
+        box-shadow: 0 4px 10px rgba(251, 192, 45, 0.4) !important; /* Resplandor amarillo */
+        transition: all 0.3s ease;
     }
-    .stButton>button:hover {
+    
+    .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 6px 15px rgba(251, 192, 45, 0.6) !important;
     }
+
+    /* Ocultar elementos molestos de Streamlit */
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    div[data-testid="stToolbar"] {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
-    # --- ESTRUCTURA CENTRADA (GRID 1-2-1) ---
-    col1, col2, col3 = st.columns([1, 1.5, 1])
+    # --- ESTRUCTURA VISUAL ---
+    # Usamos columnas para centrar. [Espacio, TARJETA, Espacio]
+    col_izq, col_centro, col_der = st.columns([1, 1.2, 1])
 
-    with col2:
+    with col_centro:
+        # Espacio para empujar hacia abajo (centrado vertical manual)
         st.write("") 
         st.write("") 
-        st.write("") # Espacio superior para centrar verticalmente
+        st.write("") 
         
-        # CONTENEDOR TIPO "CARD"
+        # AQUÍ EMPIEZA LA "CAJA" BLANCA
+        # Al poner un container, el CSS de arriba lo detecta y lo pinta de blanco
         with st.container():
-            # 1. Logotipo / Identidad Minimalista
-            st.markdown("<h2 style='text-align: center; color: #0C5A5D; margin-bottom: 0;'>🍏 nutribere</h2>", unsafe_allow_html=True)
-            st.markdown("<p style='text-align: center; color: #777; font-size: 14px; margin-top: 5px;'>Logística Alimentaria Inteligente</p>", unsafe_allow_html=True)
             
-            st.write("---")
-            
-            # 2. Input Limpio (Sin etiqueta arriba, usaremos placeholder)
+            # LOGO E IDENTIDAD
+            st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+            # Icono grande
+            st.markdown("<h1 style='font-size: 60px; margin-bottom: -10px;'>🍏</h1>", unsafe_allow_html=True)
+            # Título elegante
+            st.markdown("<h2 style='color: #0C5A5D; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px;'>nutribere</h2>", unsafe_allow_html=True)
+            # Subtítulo gris
+            st.markdown("<p style='color: #888; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 25px;'>Logística Alimentaria</p>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            # INPUT
             password = st.text_input(
-                "Contraseña", 
+                "Password", 
                 type="password", 
                 key="password_input",
-                label_visibility="collapsed", 
-                placeholder="Ingresa tu clave de acceso"
+                label_visibility="collapsed",
+                placeholder="🔑 Ingresa tu clave de acceso"
             )
             
-            st.write("") # Espaciador
-            
-            # 3. Botón de Acción Principal
-            if st.button("INICIAR SESIÓN"):
+            # BOTÓN
+            if st.button("ACCEDER A PLATAFORMA"):
                 if password == st.secrets["PASSWORD_ACCESO"]:
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
-                    st.error("🔒 Clave incorrecta")
+                    st.error("⛔ Clave incorrecta")
+            
+            # PIE DE TARJETA (Copyright falso para dar seriedad)
+            st.markdown("<p style='text-align: center; color: #CCC; font-size: 10px; margin-top: 20px;'>© 2024 Nutribere Studio v1.0</p>", unsafe_allow_html=True)
 
     return False
 
@@ -517,6 +531,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
