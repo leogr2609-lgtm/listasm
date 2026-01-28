@@ -429,29 +429,30 @@ def check_password():
     # Centrado horizontal con columnas
     col_left, col_center, col_right = st.columns([1, 1.2, 1])
 
-    with col_center:
-        # Todo lo de adentro quedará "tarjeteado" por CSS (stContainer)
-        with st.container():
-            st.markdown("<div class='nb-icon'>🍏</div>", unsafe_allow_html=True)
-            st.markdown("<h1 class='nb-title'>nutribere</h1>", unsafe_allow_html=True)
-            st.markdown("<div class='nb-sub'>Logística alimentaria</div>", unsafe_allow_html=True)
+with col_center:
+    st.markdown("<div class='nb-card'>", unsafe_allow_html=True)
 
-            password = st.text_input(
-                "Password",
-                type="password",
-                key="password_input",
-                label_visibility="collapsed",
-                placeholder="🔑 Ingresa tu clave de acceso"
-            )
+    st.markdown("<div class='nb-icon'>🍏</div>", unsafe_allow_html=True)
+    st.markdown("<h1 class='nb-title'>nutribere</h1>", unsafe_allow_html=True)
+    st.markdown("<div class='nb-sub'>Logística alimentaria</div>", unsafe_allow_html=True)
 
-            if st.button("Acceder a plataforma"):
-                if password == st.secrets["PASSWORD_ACCESO"]:
-                    st.session_state["password_correct"] = True
-                    st.rerun()
-                else:
-                    st.error("Clave incorrecta")
+    password = st.text_input(
+        "Password",
+        type="password",
+        key="password_input",
+        label_visibility="collapsed",
+        placeholder="🔑 Ingresa tu clave de acceso"
+    )
 
-            st.markdown("<div class='nb-foot'>© 2026 Nutribere Studio</div>", unsafe_allow_html=True)
+    if st.button("Acceder a plataforma"):
+        if password == st.secrets["PASSWORD_ACCESO"]:
+            st.session_state["password_correct"] = True
+            st.rerun()
+        else:
+            st.error("Clave incorrecta")
+
+    st.markdown("<div class='nb-foot'>© 2026 Nutribere Studio</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     return False
 
@@ -559,6 +560,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
