@@ -316,15 +316,14 @@ def generar_pdf_desde_editor(datos_editados, nombre_paciente):
     return pdf.output(dest='S').encode('latin-1')
 
 # --- 6. INTERFAZ PRINCIPAL ---
-import streamlit as st
 import base64
 
 def get_base64_image(image_path):
-    """Convierte la imagen local a base64 para que el navegador la encuentre siempre."""
+    """Convierte la imagen local a base64."""
     try:
         with open(image_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode()
-    except Exception as e:
+    except:
         return ""
 
 def check_password():
@@ -333,101 +332,105 @@ def check_password():
     if st.session_state.get("password_correct", False):
         return True
 
-    # 1. CARGAR TU IMAGEN .WEBP
-    img_base64 = get_base64_image("login_hero.webp")
+    # 1. CARGAR IMAGEN (Base64 para evitar errores de ruta)
+    img_base_4 = get_base64_image("login_hero.webp")
 
-    # 2. CSS DE CONTROL TOTAL (Ajustado para no romper el layout)
+    # 2. CSS DE ALTO NIVEL
+    # Usamos display: grid para dividir la pantalla exactamente en 40% y 60%
     st.markdown(f"""
     <style>
-    /* Fondo blanco y limpieza de Streamlit */
-    [data-testid="stAppViewContainer"] {{
-        background-color: white !important;
-    }}
+    /* RESET DE PÁGINA */
+    [data-testid="stAppViewContainer"] {{ background-color: white !important; }}
+    .block-container {{ padding: 0 !important; max-width: 100% !important; }}
     header, footer {{ visibility: hidden; }}
-    
-    /* Forzar que el sitio use todo el ancho sin márgenes locos */
-    .block-container {{
-        padding: 0rem !important;
-        max-width: 100% !important;
-    }}
 
-    /* TEXTOS EN NEGRO ABSOLUTO */
-    h1, h2, h3, p, label, span, div {{
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
-        text-shadow: none !important;
-    }}
-
-    /* ESTILO DE LA IMAGEN (A la derecha, sin bordes) */
-    .hero-image-container {{
+    /* CONTENEDOR DE PANTALLA DIVIDIDA */
+    .split-screen {{
+        display: grid;
+        grid-template-columns: 40% 60%;
         height: 100vh;
-        width: 100%;
-        background-image: url("data:image/webp;base64,{img_base64}");
+        width: 100vw;
+    }}
+
+    /* LADO DEL FORMULARIO */
+    .login-section {{
+        padding: 60px 10%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-color: white;
+    }}
+
+    /* LADO DE LA IMAGEN */
+    .image-section {{
+        background-image: url("data:image/webp;base64,{img_base_4}");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        height: 100vh;
     }}
 
-    /* BOTÓN Y INPUTS */
+    /* TEXTOS Y COLORES */
+    h1, h3, p, label {{
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        font-family: -apple-system, system-ui, sans-serif !important;
+    }}
+
+    /* COMPONENTES DE STREAMLIT (Ajuste fino) */
     div[data-baseweb="input"] {{
         background-color: white !important;
-        border: 1px solid #D1D5DB !important;
+        border: 1px solid #E5E7EB !important;
+        border-radius: 8px !important;
     }}
-    input {{ color: black !important; -webkit-text-fill-color: black !important; }}
     
     div[data-testid="stButton"] button {{
         width: 100%;
         background-color: #0C5A5D !important;
         color: white !important;
-        font-weight: bold;
-        padding: 12px;
-        border-radius: 8px;
+        padding: 12px !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        border: none !important;
     }}
     </style>
     """, unsafe_allow_html=True)
 
-    # 3. LAYOUT DE COLUMNAS (40% Formulario | 60% Imagen)
-    col_form, col_img = st.columns([1, 1.5], gap="large")
+    # 3. ESTRUCTURA VISUAL
+    # Usamos columnas de Streamlit pero les quitamos el control de posición con CSS
+    col_izq, col_der = st.columns([1, 1.5], gap="small")
 
-    with col_form:
-        # Contenedor para dar margen interno al formulario
-        with st.container():
-            st.write("") # Espaciadores para bajar el contenido
-            st.write("")
-            st.write("")
-            st.write("")
-            st.write("")
-            
-            # Encabezados
-            st.markdown("<h3 style='color: #0C5A5D !important; -webkit-text-fill-color: #0C5A5D !important;'>🍏 nutribere studio</h3>", unsafe_allow_html=True)
-            st.markdown("<h1 style='font-size: 42px; font-weight: 800; margin-top: 10px;'>Iniciar Sesión</h1>", unsafe_allow_html=True)
-            st.markdown("<p style='color: #6B7280 !important; -webkit-text-fill-color: #6B7280 !important;'>Automatiza la logística de tus planes nutricionales.</p>", unsafe_allow_html=True)
-            
-            st.write("")
+    with col_izq:
+        # Este div "login-section" controla el margen interno
+        st.markdown('<div class="login-section">', unsafe_allow_html=True)
+        
+        st.markdown("<h3 style='color: #0C5A5D !important; -webkit-text-fill-color: #0C5A5D !important; margin:0;'>🍏 nutribere studio</h3>", unsafe_allow_html=True)
+        st.markdown("<h1 style='font-size: 42px; font-weight: 800; margin-top: 10px; margin-bottom: 5px;'>Iniciar Sesión</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #6B7280 !important; -webkit-text-fill-color: #6B7280 !important; font-size: 16px; margin-bottom: 30px;'>Automatiza la logística de tus planes nutricionales.</p>", unsafe_allow_html=True)
 
-            # --- CAMPO USUARIO ---
-            st.markdown("<label style='font-weight: 600; font-size: 13px;'>USUARIO</label>", unsafe_allow_html=True)
-            usuario = st.text_input("User", key="user_input", label_visibility="collapsed", placeholder="ej. nutri_bere")
-            
-            st.write("")
+        # Campos de texto
+        st.markdown("<label style='font-size: 13px; font-weight: 600;'>USUARIO</label>", unsafe_allow_html=True)
+        usuario = st.text_input("User", key="user_input", label_visibility="collapsed", placeholder="ej. nutri_bere")
+        
+        st.write("")
+        
+        st.markdown("<label style='font-size: 13px; font-weight: 600;'>CONTRASEÑA</label>", unsafe_allow_html=True)
+        password = st.text_input("Pass", type="password", key="password_input", label_visibility="collapsed", placeholder="••••••••")
+        
+        st.write("")
+        
+        if st.button("ACCEDER AL SISTEMA"):
+            if usuario.lower() == "nutribere" and password == st.secrets["PASSWORD_ACCESO"]:
+                st.session_state["password_correct"] = True
+                st.rerun()
+            else:
+                st.error("🔒 Credenciales incorrectas.")
 
-            # --- CAMPO CONTRASEÑA ---
-            st.markdown("<label style='font-weight: 600; font-size: 13px;'>CONTRASEÑA</label>", unsafe_allow_html=True)
-            password = st.text_input("Pass", type="password", key="password_input", label_visibility="collapsed", placeholder="••••••••")
-            
-            st.write("")
-            
-            # BOTÓN
-            if st.button("ACCEDER AL SISTEMA"):
-                if usuario.lower() == "nutribere" and password == st.secrets["PASSWORD_ACCESO"]:
-                    st.session_state["password_correct"] = True
-                    st.rerun()
-                else:
-                    st.error("Credenciales incorrectas.")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    with col_img:
-        # Inyectamos el div que contiene la imagen de fondo por CSS
-        st.markdown('<div class="hero-image-container"></div>', unsafe_allow_html=True)
+    with col_der:
+        # Este div "image-section" pinta la imagen de fondo ocupando todo el alto
+        st.markdown('<div class="image-section"></div>', unsafe_allow_html=True)
 
     return False
 # --- NUEVA FUNCIÓN: EL LIMPIADOR AUTOMÁTICO ---
@@ -533,6 +536,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
